@@ -43,7 +43,7 @@
 ;rec: String
 (define (getContrasenna usuario)
   (if (usuario? usuario)
-      (car (cdr usuario))
+      (cadr usuario)
       null)
   )
 
@@ -52,7 +52,7 @@
 ;rec: Lista
 (define (getFecha usuario)
   (if (usuario? usuario)
-      (car (cdr (cdr usuario)))
+      (caddr usuario)
       null)
   )
 
@@ -81,6 +81,5 @@
 
 ;To import
 (provide (all-defined-out))
-
 ;---EJEMPLOS DE CADA FUNCIÓN---
-;(usuario "Grillitoxc" "123" (fecha 12 12 2021)) "lol")
+;(usuario "Grillitoxc" "123" (fecha 12 12 2021))
