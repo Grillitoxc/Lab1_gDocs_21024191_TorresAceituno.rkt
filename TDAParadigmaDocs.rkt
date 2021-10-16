@@ -13,7 +13,7 @@
 (define (paradigmaDocs nombrePlataforma fecha encryptFn decryptFn)
   (if (and (string? nombrePlataforma)
            (fecha? fecha))
-      (list nombrePlataforma fecha encryptFn decryptFn)
+      (list nombrePlataforma fecha encryptFn decryptFn (list))
       null)
   )
 
@@ -24,7 +24,7 @@
 ;rec: Booleano
 (define (paradigmaDocs? paradigmaDocs)
   (and (list? paradigmaDocs)
-       (= (length paradigmaDocs) 4))
+       (= (length paradigmaDocs) 5))
   )
 
 
@@ -41,7 +41,7 @@
 ;descripción: Función que selección la fecha
 ;dom: Lista
 ;rec: Fecha
-(define (getFecha paradigmaDocs)
+(define (getFechaP paradigmaDocs)
   (if (paradigmaDocs? paradigmaDocs)
       (car(cdr paradigmaDocs))
       null)
@@ -65,15 +65,34 @@
       null)
   )
 
+;descripción: Función que selecciona la primera lista vacía
+;dom: Lista paradigmaDocs
+;rec: Lista
+(define (getLista1 paradigmaDocs)
+  (if (paradigmaDocs? paradigmaDocs)
+      (car (cdr (cdr (cdr (cdr paradigmaDocs)))))
+      null)
+  )
+
 
 ;---MODIFICADORES---
+;descripción: Función que modifica la primera lista vacía a paradigmaDocs
+;dom: Lista x Lista
+;rec: Lista
+(define (setLista1New paradigmaDocs_1 NewLista1)
+  (if (and (paradigmaDocs? paradigmaDocs_1)
+           (list? NewLista1))
+      (list (getPlataforma paradigmaDocs_1) (getFechaP paradigmaDocs_1) (getEncrypt paradigmaDocs_1) (getDecrypt paradigmaDocs_1) NewLista1)
+      paradigmaDocs_1)
+  )
+
 ;descripción: Función que modifica el nombre de una plataforma ya creada
 ;dom: Lista x String
 ;rec: Lista
 (define (setNewNombrePlataforma paradigmaDocs_1 newNombrePlataforma)
   (if (and (paradigmaDocs? paradigmaDocs_1)
            (string? newNombrePlataforma))
-      (paradigmaDocs newNombrePlataforma (getFecha paradigmaDocs_1) (getEncrypt paradigmaDocs_1) (getDecrypt paradigmaDocs_1))
+      (list newNombrePlataforma (getFechaP paradigmaDocs_1) (getEncrypt paradigmaDocs_1) (getDecrypt paradigmaDocs_1) (getLista1 paradigmaDocs_1))
       paradigmaDocs_1)
   )
 
@@ -83,7 +102,7 @@
 (define (setNewFechaP paradigmaDocs_1 fecha)
   (if (and (paradigmaDocs? paradigmaDocs_1)
            (fecha? fecha))
-      (paradigmaDocs (getPlataforma paradigmaDocs_1) fecha (getEncrypt paradigmaDocs_1) (getDecrypt paradigmaDocs_1))
+      (list (getPlataforma paradigmaDocs_1) fecha (getEncrypt paradigmaDocs_1) (getDecrypt paradigmaDocs_1) (getLista1 paradigmaDocs_1))
       paradigmaDocs_1)
   )
 
@@ -98,4 +117,4 @@
 ;To import
 (provide (all-defined-out))
 ;---EJEMPLOS DE CADA FUNCIÓN---
-;(define Gdocs (paradigmaDocs "Gdocs" (fecha 12 12 2020) encryptFn encryptFn))
+(define Gdocs (paradigmaDocs "Gdocs" (fecha 12 12 2020) encryptFn encryptFn))
