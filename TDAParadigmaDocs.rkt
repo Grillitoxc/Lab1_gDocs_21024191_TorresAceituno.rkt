@@ -82,7 +82,7 @@
 (define (setLista1New paradigmaDocs_1 NewLista1)
   (if (and (paradigmaDocs? paradigmaDocs_1)
            (list? NewLista1))
-      (list (getPlataforma paradigmaDocs_1) (getFechaP paradigmaDocs_1) (getEncrypt paradigmaDocs_1) (getDecrypt paradigmaDocs_1) NewLista1)
+      (list (getPlataforma paradigmaDocs_1) (getFechaP paradigmaDocs_1) (getEncrypt paradigmaDocs_1) (getDecrypt paradigmaDocs_1) (cons NewLista1 (getLista1 paradigmaDocs)))
       paradigmaDocs_1)
   )
 
@@ -118,3 +118,5 @@
 (provide (all-defined-out))
 ;---EJEMPLOS DE CADA FUNCIÓN---
 (define Gdocs (paradigmaDocs "Gdocs" (fecha 12 12 2020) encryptFn encryptFn))
+(define Gdocs1 (setLista1New Gdocs (list 123)))
+(define Gdocs2 (setLista1New Gdocs1 (list 123)))

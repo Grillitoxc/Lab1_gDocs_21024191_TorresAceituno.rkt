@@ -9,7 +9,7 @@
 ;recursión: Natural
 (define (register paradigmaDocs date username password)
   (if (empty? (getLista1 paradigmaDocs))
-      (append paradigmaDocs ((getLista1 paradigmaDocs) (list (usuario username password date))))
+      (setLista1New paradigmaDocs (usuario username password date))
       0)
   )
 
@@ -26,6 +26,6 @@
 
 (define Gdocs (paradigmaDocs "gDocs" (fecha 25 10 2021) encryptFn encryptFn))
 
-(define Gdocs1 (register Gdocs (fecha 25 10 2021) "user1" "pass1"))
+(define gDocs1 (register Gdocs (fecha 25 10 2021) "user1" "pass1"))
 
 ; ((user pass fecha) (user2 pass2 fecha2)            
