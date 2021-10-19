@@ -32,36 +32,28 @@
 ;dom: Lista
 ;rec: String
 (define (getPlataforma paradigmaDocs)
-  (if (paradigmaDocs? paradigmaDocs)
-      (car paradigmaDocs)
-      null)
+      (first paradigmaDocs)
   )
 
 ;descripción: Función que selección la fecha
 ;dom: Lista
 ;rec: Fecha
 (define (getFechaP paradigmaDocs)
-  (if (paradigmaDocs? paradigmaDocs)
-      (car(cdr paradigmaDocs))
-      null)
+      (second paradigmaDocs)
   )
 
 ;descripción: Función que selecciona la función que ecripta
 ;dom: Lista
 ;rec:
 (define (getEncrypt paradigmaDocs)
-  (if (paradigmaDocs? paradigmaDocs)
-      (caddr paradigmaDocs)
-      null)
+      (third paradigmaDocs)
   )
 
 ;descripción: Función que selecciona la función que decripta
 ;dom: Lista
 ;rec:
 (define (getDecrypt paradigmaDocs)
-  (if (paradigmaDocs? paradigmaDocs)
-      (cadddr paradigmaDocs)
-      null)
+      (fourth paradigmaDocs)
   )
 
 ;descripción: Función que selecciona la primera lista vacía
@@ -78,7 +70,7 @@
 ;rec: Lista
 (define (setLista1 paradigmaDocs_1 NewLista1)
   (if (and (paradigmaDocs? paradigmaDocs_1)
-           (list? newNombrePlataforma))
+           (list? NewLista1))
      (list (getPlataforma paradigmaDocs_1) (getFechaP paradigmaDocs_1) (getEncrypt paradigmaDocs_1) (getDecrypt paradigmaDocs_1) NewLista1)
      paradigmaDocs_1)
   )
