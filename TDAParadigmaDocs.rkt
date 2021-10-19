@@ -23,8 +23,7 @@
 ;dom: Lista
 ;rec: Booleano
 (define (paradigmaDocs? paradigmaDocs)
-  (and (list? paradigmaDocs)
-       (= (length paradigmaDocs) 5))
+  (and (list? paradigmaDocs))
   )
 
 
@@ -69,9 +68,7 @@
 ;dom: Lista paradigmaDocs
 ;rec: Lista
 (define (getLista1 paradigmaDocs)
-  (if (paradigmaDocs? paradigmaDocs)
-      (car (cdr (cdr (cdr (cdr paradigmaDocs)))))
-      null)
+      (fifth paradigmaDocs)
   )
 
 
@@ -79,11 +76,11 @@
 ;descripción: Función que modifica la primera lista vacía a paradigmaDocs
 ;dom: Lista x Lista
 ;rec: Lista
-(define (setLista1New paradigmaDocs_1 NewLista1)
+(define (setLista1 paradigmaDocs_1 NewLista1)
   (if (and (paradigmaDocs? paradigmaDocs_1)
-           (list? NewLista1))
-      (list (getPlataforma paradigmaDocs_1) (getFechaP paradigmaDocs_1) (getEncrypt paradigmaDocs_1) (getDecrypt paradigmaDocs_1) (cons NewLista1 (getLista1 paradigmaDocs)))
-      paradigmaDocs_1)
+           (list? newNombrePlataforma))
+     (list (getPlataforma paradigmaDocs_1) (getFechaP paradigmaDocs_1) (getEncrypt paradigmaDocs_1) (getDecrypt paradigmaDocs_1) NewLista1)
+     paradigmaDocs_1)
   )
 
 ;descripción: Función que modifica el nombre de una plataforma ya creada
@@ -118,5 +115,5 @@
 (provide (all-defined-out))
 ;---EJEMPLOS DE CADA FUNCIÓN---
 (define Gdocs (paradigmaDocs "Gdocs" (fecha 12 12 2020) encryptFn encryptFn))
-(define Gdocs1 (setLista1New Gdocs (list 123)))
-(define Gdocs2 (setLista1New Gdocs1 (list 123)))
+(define Gdocs1 (setLista1 Gdocs (cons(usuario "grillo" "lol" (fecha 12 12 1202))(getLista1 Gdocs))))
+(define Gdocs2 (setLista1 Gdocs1 (cons(usuario "grillo1" "lol1" (fecha 12 12 1202))(getLista1 Gdocs1))))
