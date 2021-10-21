@@ -13,13 +13,13 @@
 (define (paradigmaDocs nombrePlataforma fecha encryptFn decryptFn)
   (if (and (string? nombrePlataforma)
            (fecha? fecha))
-      (list nombrePlataforma fecha encryptFn decryptFn (list))
+      (list nombrePlataforma fecha (list))
       null)
   )
 
 
 ;---PERTINENCIA---
-;descripción: Función que verifica el largo de paradigmaDocs como argumentos válidos
+;descripción: Función que verifica el formato de paradigmaDocs
 ;dom: Lista
 ;rec: Booleano
 (define (paradigmaDocs? paradigmaDocs)
@@ -42,25 +42,11 @@
       (second paradigmaDocs)
   )
 
-;descripción: Función que selecciona la función que ecripta
-;dom: Lista
-;rec:
-(define (getEncrypt paradigmaDocs)
-      (third paradigmaDocs)
-  )
-
-;descripción: Función que selecciona la función que decripta
-;dom: Lista
-;rec:
-(define (getDecrypt paradigmaDocs)
-      (fourth paradigmaDocs)
-  )
-
 ;descripción: Función que selecciona la primera lista vacía
 ;dom: Lista paradigmaDocs
 ;rec: Lista
 (define (getLista1 paradigmaDocs)
-      (fifth paradigmaDocs)
+      (third paradigmaDocs)
   )
 
 
@@ -71,7 +57,7 @@
 (define (setLista1 paradigmaDocs_1 NewLista1)
   (if (and (paradigmaDocs? paradigmaDocs_1)
            (list? NewLista1))
-     (list (getPlataforma paradigmaDocs_1) (getFechaP paradigmaDocs_1) (getEncrypt paradigmaDocs_1) (getDecrypt paradigmaDocs_1) NewLista1)
+     (list (getPlataforma paradigmaDocs_1) (getFechaP paradigmaDocs_1) NewLista1)
      paradigmaDocs_1)
   )
 
@@ -81,7 +67,7 @@
 (define (setNewNombrePlataforma paradigmaDocs_1 newNombrePlataforma)
   (if (and (paradigmaDocs? paradigmaDocs_1)
            (string? newNombrePlataforma))
-      (list newNombrePlataforma (getFechaP paradigmaDocs_1) (getEncrypt paradigmaDocs_1) (getDecrypt paradigmaDocs_1) (getLista1 paradigmaDocs_1))
+      (list newNombrePlataforma (getFechaP paradigmaDocs_1) (getLista1 paradigmaDocs_1))
       paradigmaDocs_1)
   )
 
@@ -91,15 +77,15 @@
 (define (setNewFechaP paradigmaDocs_1 fecha)
   (if (and (paradigmaDocs? paradigmaDocs_1)
            (fecha? fecha))
-      (list (getPlataforma paradigmaDocs_1) fecha (getEncrypt paradigmaDocs_1) (getDecrypt paradigmaDocs_1) (getLista1 paradigmaDocs_1))
+      (list (getPlataforma paradigmaDocs_1) fecha (getLista1 paradigmaDocs_1))
       paradigmaDocs_1)
   )
 
 
 ;---ORAS FUNCIONES---
 ;descripción: Función que encripta/decripta un texto (se usan para lo mismo)
-;dom: Lista
-;rec: Lista
+;dom: String
+;rec: String
 (define encryptFn (lambda (s) (list->string (reverse (string->list s)))))
 
 
