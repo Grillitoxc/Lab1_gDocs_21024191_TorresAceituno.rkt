@@ -1,29 +1,26 @@
 #lang racket
-;TDA ParadigmaDocs
+;TDA Paradigmadocs
 (require "TDADate.rkt")
 (require "TDAUser.rkt")
 
-;Representacion: (entero X entero X entero)
-;(list dia mes año)
-
 ;---CONSTRUCTORES---
-;descripción: Función que crea la plataforma con paradigmaDocs
+;descripción: Función que crea la plataforma con paradigmadocs
 ;dom: String X Date X EncryptFunction X DecryptFunction
 ;rec: Lista
-(define (paradigmaDocs nombrePlataforma fecha encryptFn decryptFn)
+(define (paradigmadocs nombrePlataforma fecha encryptFn decryptFn)
   (if (and (string? nombrePlataforma)
            (fecha? fecha))
-      (list nombrePlataforma fecha (list))
+      (list nombrePlataforma fecha (list) (list) (list))
       null)
   )
 
 
 ;---PERTINENCIA---
-;descripción: Función que verifica el formato de paradigmaDocs
+;descripción: Función que verifica el formato de paradigmadocs
 ;dom: Lista
 ;rec: Booleano
-(define (paradigmaDocs? paradigmaDocs)
-  (and (list? paradigmaDocs))
+(define (paradigmadocs? paradigmadocs)
+  (list? paradigmadocs)
   )
 
 
@@ -31,54 +28,88 @@
 ;descripción: Función que selecciona el nombre de la plataforma
 ;dom: Lista
 ;rec: String
-(define (getPlataforma paradigmaDocs)
-      (first paradigmaDocs)
+(define (getPlataforma paradigmadocs)
+  (first paradigmadocs)
   )
 
 ;descripción: Función que selección la fecha
 ;dom: Lista
 ;rec: Fecha
-(define (getFechaP paradigmaDocs)
-      (second paradigmaDocs)
+(define (getFechaP paradigmadocs)
+  (second paradigmadocs)
   )
 
-;descripción: Función que selecciona la primera lista vacía
-;dom: Lista paradigmaDocs
+;descripción: Función que selecciona la primera lista, correspondiente alos usuarios registrados
+;dom: Lista paradigmadocs
 ;rec: Lista
-(define (getLista1 paradigmaDocs)
-      (third paradigmaDocs)
+(define (getLista1 paradigmadocs)
+  (third paradigmadocs)
+  )
+
+;descripción: Función que selecciona la segunda lista, correspondiente al estado de inicio de sesión
+;dom: Lista paradigmadocs
+;rec: Lista
+(define (getLista2 paradigmadocs)
+  (fourth paradigmadocs)
+  )
+
+;descripción: Función que selecciona la tercera lista, correspondiente a información de acceso
+;dom: Lista paradigmadocs
+;rec: Lista
+(define (getLista3 paradigmadocs)
+  (fifth paradigmadocs)
   )
 
 
 ;---MODIFICADORES---
-;descripción: Función que modifica la primera lista vacía a paradigmaDocs
+;descripción: Función que modifica la primera lista vacía a paradigmadocs
 ;dom: Lista x Lista
 ;rec: Lista
-(define (setLista1 paradigmaDocs_1 NewLista1)
-  (if (and (paradigmaDocs? paradigmaDocs_1)
+(define (setLista1 paradigmadocs_1 NewLista1)
+  (if (and (paradigmadocs? paradigmadocs_1)
            (list? NewLista1))
-     (list (getPlataforma paradigmaDocs_1) (getFechaP paradigmaDocs_1) NewLista1)
-     paradigmaDocs_1)
+     (list (getPlataforma paradigmadocs_1) (getFechaP paradigmadocs_1) NewLista1 (getLista2 paradigmadocs_1))
+     paradigmadocs_1)
+  )
+
+;descripción: Función que modifica la segunda lista de paradigmadocs
+;dom: Lista x Lista
+;rec: Lista
+(define (setLista2 paradigmadocs_1 NewLista2)
+  (if (and (paradigmadocs? paradigmadocs_1)
+           (list? NewLista2))
+     (list (getPlataforma paradigmadocs_1) (getFechaP paradigmadocs_1) (getLista1 paradigmadocs_1) NewLista2)
+     paradigmadocs_1)
+  )
+
+;descripción: Función que modifica la segunda lista de paradigmadocs
+;dom: Lista x Lista
+;rec: Lista
+(define (setLista3 paradigmadocs_1 NewLista3)
+  (if (and (paradigmadocs? paradigmadocs_1)
+           (list? NewLista3))
+     (list (getPlataforma paradigmadocs_1) (getFechaP paradigmadocs_1) (getLista1 paradigmadocs_1) (getLista3 paradigmadocs_1) NewLista3)
+     paradigmadocs_1)
   )
 
 ;descripción: Función que modifica el nombre de una plataforma ya creada
 ;dom: Lista x String
 ;rec: Lista
-(define (setNewNombrePlataforma paradigmaDocs_1 newNombrePlataforma)
-  (if (and (paradigmaDocs? paradigmaDocs_1)
+(define (setNewNombrePlataforma paradigmadocs_1 newNombrePlataforma)
+  (if (and (paradigmadocs? paradigmadocs_1)
            (string? newNombrePlataforma))
-      (list newNombrePlataforma (getFechaP paradigmaDocs_1) (getLista1 paradigmaDocs_1))
-      paradigmaDocs_1)
+      (list newNombrePlataforma (getFechaP paradigmadocs_1) (getLista1 paradigmadocs_1) (getLista2 paradigmadocs))
+      paradigmadocs_1)
   )
 
 ;descripción: Función que modifica una fecha (no tiene uso realmente)
 ;dom: Lista x Fecha
 ;rec: Lista
-(define (setNewFechaP paradigmaDocs_1 fecha)
-  (if (and (paradigmaDocs? paradigmaDocs_1)
+(define (setNewFechaP paradigmadocs_1 fecha)
+  (if (and (paradigmadocs? paradigmadocs_1)
            (fecha? fecha))
-      (list (getPlataforma paradigmaDocs_1) fecha (getLista1 paradigmaDocs_1))
-      paradigmaDocs_1)
+      (list (getPlataforma paradigmadocs_1) fecha (getLista1 paradigmadocs_1) (getLista2 paradigmadocs))
+      paradigmadocs_1)
   )
 
 
@@ -91,7 +122,3 @@
 
 ;To import
 (provide (all-defined-out))
-;---EJEMPLOS DE CADA FUNCIÓN---
-(define Gdocs (paradigmaDocs "Gdocs" (fecha 12 12 2020) encryptFn encryptFn))
-(define Gdocs1 (setLista1 Gdocs (cons(usuario "grillo" "lol" (fecha 12 12 1202))(getLista1 Gdocs))))
-(define Gdocs2 (setLista1 Gdocs1 (cons(usuario "grillo1" "lol1" (fecha 12 12 1202))(getLista1 Gdocs1))))
