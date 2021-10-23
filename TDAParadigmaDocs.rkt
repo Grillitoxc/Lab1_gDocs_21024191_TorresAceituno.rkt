@@ -68,7 +68,7 @@
 (define (setLista1 paradigmadocs_1 NewLista1)
   (if (and (paradigmadocs? paradigmadocs_1)
            (list? NewLista1))
-     (list (getPlataforma paradigmadocs_1) (getFechaP paradigmadocs_1) NewLista1 (getLista2 paradigmadocs_1))
+     (list (getPlataforma paradigmadocs_1) (getFechaP paradigmadocs_1) NewLista1 (getLista2 paradigmadocs_1) (getLista3 paradigmadocs_1))
      paradigmadocs_1)
   )
 
@@ -78,7 +78,7 @@
 (define (setLista2 paradigmadocs_1 NewLista2)
   (if (and (paradigmadocs? paradigmadocs_1)
            (list? NewLista2))
-     (list (getPlataforma paradigmadocs_1) (getFechaP paradigmadocs_1) (getLista1 paradigmadocs_1) NewLista2)
+     (list (getPlataforma paradigmadocs_1) (getFechaP paradigmadocs_1) (getLista1 paradigmadocs_1) NewLista2 (getLista3 paradigmadocs_1))
      paradigmadocs_1)
   )
 
@@ -88,7 +88,7 @@
 (define (setLista3 paradigmadocs_1 NewLista3)
   (if (and (paradigmadocs? paradigmadocs_1)
            (list? NewLista3))
-     (list (getPlataforma paradigmadocs_1) (getFechaP paradigmadocs_1) (getLista1 paradigmadocs_1) (getLista3 paradigmadocs_1) NewLista3)
+     (list (getPlataforma paradigmadocs_1) (getFechaP paradigmadocs_1) (getLista1 paradigmadocs_1) (getLista2 paradigmadocs_1) NewLista3)
      paradigmadocs_1)
   )
 
