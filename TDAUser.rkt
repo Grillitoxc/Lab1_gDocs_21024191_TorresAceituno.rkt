@@ -81,5 +81,3 @@
 
 ;To import
 (provide (all-defined-out))
-;---EJEMPLOS DE CADA FUNCIÓN---
-;(usuario "Grillitoxc" "123" (fecha 12 12 2021))
