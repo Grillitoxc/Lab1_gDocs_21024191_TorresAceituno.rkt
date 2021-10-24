@@ -24,29 +24,25 @@
 ;descripción: Función que autentica a un usuario registrado y le permite ejecutar un comando específico.
 ;dom: paradigmadocs X string X string X function 
 ;rec: Paradigmadocs
-;recursión: 
-;(define (login paradigmadocs username pasword operation)
+;recursión: Natural
+(define (login paradigmadocs username password)
+  (define (verificado? listaUsuarios username_1 password_1)
+    (if (empty? listaUsuarios)
+        #f
+        (if (and (eq? (getNombre (car listaUsuarios)) username_1)
+                 (eq? (getContrasenna (car listaUsuarios)) password_1))
+            #t
+            (verificado? (cdr listaUsuarios) username_1 password_1)))
+    )
+  (if (verificado? (getLista1 paradigmadocs) username password)
+      (setLista2 paradigmadocs (list "Conectado"))
+      (setLista2 paradigmadocs null))
+  )
+
+
+
+
   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 ;---EJEMPLOS DE CADA FUNCIÓN---
@@ -54,6 +50,12 @@
 (define Gdocs000 (paradigmadocs "Gdocs" (fecha 25 10 2021) encryptFn encryptFn))
 
 ; 1) REGISTER 
-(define Gdocs011 (register (register (register Gdocs000 (fecha 25 10 2021) "user2" "pass1") (fecha 25 10 2021) "user2" "pass2") (fecha 25 10 2021) "user3" "pass3"))
+(define Gdocs011 (register (register (register Gdocs000 (fecha 25 10 2021) "user1" "pass1") (fecha 25 10 2021) "user2" "pass2") (fecha 25 10 2021) "user3" "pass3"))
 (define Gdocs012 (register Gdocs000 (fecha 25 3 2020) "user" "pass"))
 (define Gdocs013 (register (register Gdocs000 (fecha 25 3 2020) "user" "pass") (fecha 25 3 2020) "user" "pass2"))
+
+; 2) LOGIN
+(define Gdocs021 (login Gdocs011 "user3" "pass3"))
+(define Gdocs022 (login Gdocs012 "user" "pass"))
+(define Gdocs023 (login Gdocs013 "user1" "pass1"))
+
