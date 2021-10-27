@@ -2,6 +2,7 @@
 (require "TDAParadigmadocs.rkt")
 (require "TDAUser.rkt")
 (require "TDADate.rkt")
+(require "TDADocumento.rkt")
 
 ;descripción: Función que registra a un usuario verificando que este sea único
 ;dom: Paradigmadocs X date X string X string
@@ -24,8 +25,8 @@
 ;descripción: Función que autentica a un usuario registrado y le permite ejecutar un comando específico.
 ;dom: paradigmadocs X string X string X function 
 ;rec: Paradigmadocs
-;recursión: Natural
-(define (login paradigmadocs username password)
+;recursión: de cola
+(define (login paradigmadocs username password operation)
   (define (verificado? listaUsuarios username_1 password_1)
     (if (empty? listaUsuarios)
         #f
@@ -35,14 +36,24 @@
             (verificado? (cdr listaUsuarios) username_1 password_1)))
     )
   (if (verificado? (getLista1 paradigmadocs) username password)
-      (setLista2 paradigmadocs (list "Conectado"))
+      (setLista2 paradigmadocs (list username))
       (setLista2 paradigmadocs null))
-  )
-
-
-
-
   
+  (cond
+    [(eq? operation create) (lambda(date nombre contenido) (operation paradigmadocs date nombre contenido))]                      
+  )
+)
+
+
+;descripción: Función que crea un documento con los datos entregados.Tabién e encarga de encriptar el contenido de este.
+;dom: paradigmadocs X date X String (titulo documento) X String  (contenido) 
+;rec: Paradigmadocs
+(define (create paradigmadocs date nombre contenido)
+  (if (null? (getLista2 paradigmadocs))
+      paradigmadocs
+      (documento nombre date (encryptFn contenido) (car(getLista2 paradigmadocs))))
+  )
+           
 
 
 ;---EJEMPLOS DE CADA FUNCIÓN---
@@ -55,7 +66,11 @@
 (define Gdocs013 (register (register Gdocs000 (fecha 25 3 2020) "user" "pass") (fecha 25 3 2020) "user" "pass2"))
 
 ; 2) LOGIN
-(define Gdocs021 (login Gdocs011 "user3" "pass3"))
-(define Gdocs022 (login Gdocs012 "user" "pass"))
-(define Gdocs023 (login Gdocs013 "user1" "pass1"))
+;(define Gdocs021 (login Gdocs011 "user3" "pass3"))
+(define Gdocs022 ((login Gdocs012 "user" "pass" create)(fecha 12 12 1220) "doc1" "Este es mi primer documento"))
+;(define Gdocs023 (login Gdocs013 "user1" "pass1"))
+
+; 3) CREATE
+(define lol1 (create Gdocs022 (fecha 12 12 1220) "primerTitulo" "contenido"))  
+  
 
