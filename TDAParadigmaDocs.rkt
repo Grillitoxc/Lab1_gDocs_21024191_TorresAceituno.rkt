@@ -10,7 +10,7 @@
 (define (paradigmadocs nombrePlataforma fecha encryptFn decryptFn)
   (if (and (string? nombrePlataforma)
            (fecha? fecha))
-      (list nombrePlataforma fecha (list) (list) (list))
+      (list nombrePlataforma fecha (list) (list) (list) encryptFn decryptFn)
       null)
   )
 
@@ -60,6 +60,20 @@
   (fifth paradigmadocs)
   )
 
+;descripción: Función que selecciona función de encriptación
+;dom: Paradigmadocs
+;rec: Función
+(define (getEncrypt paradigmadocs)
+  (sixth paradigmadocs)
+  )
+
+;descripción: Función que selecciona la función de decriptación
+;dom: Paradigmadocs
+;rec: Función
+(define (getDecrypt paradigmadocs)
+  (seventh paradigmadocs)
+  )
+
 
 ;---MODIFICADORES---
 ;descripción: Función que modifica la primera lista vacía a paradigmadocs
@@ -68,7 +82,7 @@
 (define (setLista1 paradigmadocs_1 NewLista1)
   (if (and (paradigmadocs? paradigmadocs_1)
            (list? NewLista1))
-     (list (getPlataforma paradigmadocs_1) (getFechaP paradigmadocs_1) NewLista1 (getLista2 paradigmadocs_1) (getLista3 paradigmadocs_1))
+     (list (getPlataforma paradigmadocs_1) (getFechaP paradigmadocs_1) NewLista1 (getLista2 paradigmadocs_1) (getLista3 paradigmadocs_1) (getEncrypt paradigmadocs_1) (getDecrypt paradigmadocs_1))
      paradigmadocs_1)
   )
 
@@ -78,7 +92,7 @@
 (define (setLista2 paradigmadocs_1 NewLista2)
   (if (and (paradigmadocs? paradigmadocs_1)
            (list? NewLista2))
-     (list (getPlataforma paradigmadocs_1) (getFechaP paradigmadocs_1) (getLista1 paradigmadocs_1) NewLista2 (getLista3 paradigmadocs_1))
+     (list (getPlataforma paradigmadocs_1) (getFechaP paradigmadocs_1) (getLista1 paradigmadocs_1) NewLista2 (getLista3 paradigmadocs_1) (getEncrypt paradigmadocs_1) (getDecrypt paradigmadocs_1))
      paradigmadocs_1)
   )
 
@@ -86,10 +100,7 @@
 ;dom: Lista x Lista
 ;rec: Lista
 (define (setLista3 paradigmadocs_1 NewLista3)
-  (if (and (paradigmadocs? paradigmadocs_1)
-           (list? NewLista3))
-     (list (getPlataforma paradigmadocs_1) (getFechaP paradigmadocs_1) (getLista1 paradigmadocs_1) (getLista2 paradigmadocs_1) NewLista3)
-     paradigmadocs_1)
+  (list (getPlataforma paradigmadocs_1) (getFechaP paradigmadocs_1) (getLista1 paradigmadocs_1) (getLista2 paradigmadocs_1) (cons NewLista3 (getLista3 paradigmadocs_1)) (getEncrypt paradigmadocs_1) (getDecrypt paradigmadocs_1))
   )
 
 ;descripción: Función que modifica el nombre de una plataforma ya creada
@@ -98,7 +109,7 @@
 (define (setNewNombrePlataforma paradigmadocs_1 newNombrePlataforma)
   (if (and (paradigmadocs? paradigmadocs_1)
            (string? newNombrePlataforma))
-      (list newNombrePlataforma (getFechaP paradigmadocs_1) (getLista1 paradigmadocs_1) (getLista2 paradigmadocs))
+      (list newNombrePlataforma (getFechaP paradigmadocs_1) (getLista1 paradigmadocs_1) (getLista2 paradigmadocs_1) (getLista3 paradigmadocs_1) (getEncrypt paradigmadocs_1) (getDecrypt paradigmadocs_1))
       paradigmadocs_1)
   )
 
@@ -108,7 +119,7 @@
 (define (setNewFechaP paradigmadocs_1 fecha)
   (if (and (paradigmadocs? paradigmadocs_1)
            (fecha? fecha))
-      (list (getPlataforma paradigmadocs_1) fecha (getLista1 paradigmadocs_1) (getLista2 paradigmadocs))
+      (list (getPlataforma paradigmadocs_1) fecha (getLista1 paradigmadocs_1) (getLista2 paradigmadocs) (getLista3 paradigmadocs_1) (getEncrypt paradigmadocs_1) (getDecrypt paradigmadocs_1))
       paradigmadocs_1)
   )
 
