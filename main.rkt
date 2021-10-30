@@ -55,9 +55,22 @@
   (lambda(date nombre contenido)
     (if (null? (getLista2 paradigmadocs))
         paradigmadocs
-        (setLista3 (setLista2 paradigmadocs null) (documento nombre date (encryptFn contenido) (car(getLista2 paradigmadocs))))))
+        (setLista3 (setLista2 paradigmadocs null)
+                   (documento nombre date ((getEncrypt paradigmadocs) contenido) (car(getLista2 paradigmadocs)) (length (getLista3 paradigmadocs)) null))
+        )
+    )
   )
-           
+
+
+;descripción: Función que
+;dom: Paradigmadocs X Entero X Lista de accesos
+;rec: Paradigmadocs
+;(define (share paradigmadocs)
+;  (lambda(idDoc access . accesses)
+    
+    
+
+
 
 ;---EJEMPLOS DE CADA FUNCIÓN---
 ; GENERANDO PARADIGMADOCS
@@ -76,4 +89,4 @@
 ; 3) CREATE
 (define Gdocs031 ((login Gdocs011 "user3" "pass3" create) (fecha 12 12 1220) "primerTitulo" "contenido"))
 (define Gdocs032 ((login Gdocs012 "user" "pass" create) (fecha 12 12 1212) "doc1" "contenido1"))
-(define Gdocs033 ((login Gdocs012 "user1" "pass1" create)(fecha 12 12 1212) "doc1" "contenido1"))
+(define Gdocs033 ((login Gdocs032 "user" "pass" create) (fecha 12 12 1212) "doc2" "contenido2"))
