@@ -2,19 +2,20 @@
 ;TDA Documento
 (require "TDADate.rkt")
 
-;Representación: (string X fecha X string X string)
+;Representación: (string X fecha X string X string X entero X lista)
 ;(titulo fecha contenido autor)
 
 ;---CONSTRUCTORES---
 ;descripción: Función que crea la un documento con sus parámetros específicos
 ;dom:
 ;rec:
-(define (documento titulo fecha contenido autor)
+(define (documento titulo fecha contenido autor idDoc accesos)
   (if (and (string? titulo)
            (fecha? fecha)
            (string? autor)
-           (string? contenido))
-      (list titulo fecha contenido autor)
+           (string? contenido)
+           )
+      (list titulo fecha contenido autor idDoc accesos)
       null)
   )
 
@@ -57,6 +58,20 @@
   (fourth documento)
   )
 
+;descripción: Función que selecciona el id del documento
+;dom: Lista Documento
+;rec: Entero
+(define (getidDoc documento)
+  (fifth documento)
+  )
+
+;descripción: Función que selecciona la lista de accesos del documento
+;dom: Lista Documento
+;rec: Lista de accesos
+(define (getAccesos documento)
+  (sixth documento)
+  )
+
 
 ;---MODIFICADORES---
 ;descripción: Función que cambia el titulo del documento
@@ -64,7 +79,7 @@
 ;rec: Lista documento
 (define (setTitulo documento newTitulo)
   (if (string? newTitulo)
-      (list newTitulo (getFechaD documento) (getContenido documento) (getAutor documento))
+      (list newTitulo (getFechaD documento) (getContenido documento) (getAutor documento) (getidDoc documento) (getAccesos documento))
       documento)
   )
 
@@ -72,18 +87,38 @@
 ;dom: Lista documento X string
 ;rec: Lista documento
 (define (setContenido documento newContenido)
-  (list (getTitulo documento) (getFechaD documento) newContenido (getAutor documento))
+  (list (getTitulo documento) (getFechaD documento) newContenido (getAutor documento) (getidDoc documento) (getAccesos documento))
   )
 
 ;descripción: Función que modifica el autor del documento
-;dom:
-;rec:
+;dom: Lista documento X string
+;rec: Lista documento
 (define (setAutor documento newAutor)
   (if (string? newAutor)
-      (list (getTitulo documento) (getFechaD documento) (getContenido documento) newAutor)
-  documento)
+      (list (getTitulo documento) (getFechaD documento) (getContenido documento) newAutor (getidDoc documento) (getAccesos documento))
+      documento)
   )
+
+;descripción: Función que modifica el número de id del documento
+;dom: Lista documento X Entero
+;rec: Lista documento
+(define (setidDoc documento idDoc)
+  (if (number? idDoc)
+      (list (getTitulo documento) (getFechaD documento) (getContenido documento) (getAutor documento) idDoc (getAccesos documento))
+      documento)
+  )
+  
+;descripción: Función que agrega una lista de acceso
+;dom: Lista documento X Entero
+;rec: Lista documento
+(define (setAccesos documento accesos)
+  (if (list? accesos)
+      (list (getTitulo documento) (getFechaD documento) (getContenido documento) (getAutor documento) (getidDoc documento) (cons (getAccesos documento) accesos))
+      documento)
+  )
+
 
 
 ;To import
 (provide (all-defined-out))
+

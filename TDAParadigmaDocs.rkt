@@ -60,6 +60,20 @@
   (fifth paradigmadocs)
   )
 
+;descripción: Función que selecciona función de encriptación
+;dom: Paradigmadocs
+;rec: Función
+(define (getEncrypt paradigmadocs)
+  (sixth paradigmadocs)
+  )
+
+;descripción: Función que selecciona la función de decriptación
+;dom: Paradigmadocs
+;rec: Función
+(define (getDecrypt paradigmadocs)
+  (seventh paradigmadocs)
+  )
+
 
 ;---MODIFICADORES---
 ;descripción: Función que modifica la primera lista vacía a paradigmadocs
@@ -107,20 +121,6 @@
            (fecha? fecha))
       (list (getPlataforma paradigmadocs_1) fecha (getLista1 paradigmadocs_1) (getLista2 paradigmadocs) (getLista3 paradigmadocs_1) (getEncrypt paradigmadocs_1) (getDecrypt paradigmadocs_1))
       paradigmadocs_1)
-  )
-
-;descripción: Función que selecciona función de encriptación
-;dom: Paradigmadocs
-;rec: Función
-(define (getEncrypt paradigmadocs)
-  (sixth paradigmadocs)
-  )
-
-;descripción: Función que selecciona la función de decriptación
-;dom: Paradigmadocs
-;rec: Función
-(define (getDecrypt paradigmadocs)
-  (seventh paradigmadocs)
   )
 
 
