@@ -3,8 +3,9 @@
 (require "TDAUser.rkt")
 (require "TDADate.rkt")
 (require "TDADocumento.rkt")
+(require "TDAAcceso.rkt")
 
-;descripción: Función que registra a un usuario verificando que este sea único.
+;descripción: Función que registra a un usuario verificando que este sea único
 ;dom: Paradigmadocs X date X string X string
 ;rec: Paradigmadocs
 ;recursión: Natural
@@ -22,7 +23,7 @@
   )
 
 
-;descripción: Función que autentica a un usuario registrado y le permite ejecutar un comando específico.
+;descripción: Función que autentica a un usuario registrado y le permite ejecutar un comando específico
 ;dom: paradigmadocs X string X string X function 
 ;rec: Paradigmadocs
 ;recursión: de cola
@@ -38,17 +39,19 @@
   (if (verificado? (getLista1 paradigmadocs) username password)
       (cond
         [(eq? operation create)(operation (setLista2 paradigmadocs (list username)))]
+        [(eq? operation share)(operation (setLista2 paradigmadocs (list username)))]
         [else paradigmadocs]
         )
       (cond
         [(eq? operation create)(operation paradigmadocs)]
+        [(eq? operation share)(operation paradigmadocs)]
         [else paradigmadocs]
         )
       )
   )
 
 
-;descripción: Función que crea un documento con los datos entregados.Tabién e encarga de encriptar el contenido de este.
+;descripción: Función que crea un documento con los datos entregados. También se encarga de encriptar el contenido de este
 ;dom: paradigmadocs X date X String (titulo documento) X String  (contenido) 
 ;rec: Paradigmadocs
 (define (create paradigmadocs)
@@ -65,13 +68,22 @@
 ;descripción: Función que
 ;dom: Paradigmadocs X Entero X Lista de accesos
 ;rec: Paradigmadocs
-;(define (share paradigmadocs)
-;  (lambda(idDoc access . accesses)
-    
-    
+(define (share paradigmadocs)
+  (lambda(idDoc access . accesses)
+    (if (null? (getLista2 paradigmadocs))
+        paradigmadocs
+        (if (buscarDoc (getLista3 paradigmadocs) idDoc)
+            (setAccesos (seleccionarDoc (getLista3 paradigmadocs) idDoc) (filtrarAccesos paradigmadocs (unirAccess access accesses) (buscarUserDoc (getLista3 paradigmadocs) idDoc)))
+            paradigmadocs))))
+            
+        
+        
+      
 
 
 
+
+           
 ;---EJEMPLOS DE CADA FUNCIÓN---
 ; GENERANDO PARADIGMADOCS
 (define Gdocs000 (paradigmadocs "Gdocs" (fecha 25 10 2021) encryptFn encryptFn))
@@ -83,10 +95,18 @@
 
 ; 2) LOGIN
 (define Gdocs021 (login Gdocs011 "user3" "pass3" create))
-(define Gdocs022 ((login Gdocs012 "user" "pass" create) (fecha 12 12 1212) "doc1" "contenido1"))
-(define Gdocs023 ((login Gdocs012 "user1" "pass1" create)(fecha 12 12 1212) "doc1" "contenido1"))
+(define Gdocs022 ((login Gdocs011 "user1" "pass1" create) (fecha 12 12 1212) "doc1" "contenido1"))
+(define Gdocs023 ((login Gdocs022 "user2" "pass2" create)(fecha 12 12 1212) "doc2" "contenido2"))
 
 ; 3) CREATE
 (define Gdocs031 ((login Gdocs011 "user3" "pass3" create) (fecha 12 12 1220) "primerTitulo" "contenido"))
 (define Gdocs032 ((login Gdocs012 "user" "pass" create) (fecha 12 12 1212) "doc1" "contenido1"))
 (define Gdocs033 ((login Gdocs032 "user" "pass" create) (fecha 12 12 1212) "doc2" "contenido2"))
+
+; 3) SHARE
+(define Gdocs041 ((login Gdocs023 "user1" "pass1" share) 0 (access "user3" #\r) (access "user2" #\c)))
+
+; 4)
+(define lol1 (sacarUsuariosAccesos (list (access "user2" #\r) (access "user1" #\r))))
+(define lol2 (sacarUsuariosRegistrados (getLista1 Gdocs011)))
+(define lol3 (filtrarAccesos Gdocs011 (list (access "user2" #\r) (access "user1" #\r)) "user5"))
