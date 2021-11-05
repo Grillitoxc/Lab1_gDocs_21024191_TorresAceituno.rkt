@@ -40,11 +40,13 @@
       (cond
         [(eq? operation create)(operation (setLista2 paradigmadocs (list username)))]
         [(eq? operation share)(operation (setLista2 paradigmadocs (list username)))]
+        [(eq? operation revokeAllAccesses)(operation (setLista2 paradigmadocs (list username)))]
         [else paradigmadocs]
         )
       (cond
         [(eq? operation create)(operation paradigmadocs)]
         [(eq? operation share)(operation paradigmadocs)]
+        [(eq? operation revokeAllAccesses)(operation paradigmadocs)]
         [else paradigmadocs]
         )
       )
@@ -59,7 +61,7 @@
     (if (null? (getLista2 paradigmadocs))
         paradigmadocs
         (setLista3 (setLista2 paradigmadocs null)
-                   (documento nombre date ((getEncrypt paradigmadocs) contenido) (car(getLista2 paradigmadocs)) (length (getLista3 paradigmadocs)) null))
+                   (documento nombre date ((getEncrypt paradigmadocs) contenido) (car(getLista2 paradigmadocs)) (length (getLista3 paradigmadocs)) null null))
         )
     )
   )
@@ -75,19 +77,22 @@
         paradigmadocs
         (if (buscarDoc (getLista3 paradigmadocs) idDoc)
             (setLista3_implante (setLista2 paradigmadocs null)
-                                (reverse (list-set (reverse (getLista3 paradigmadocs)) idDoc (setAccesos (seleccionarDoc (getLista3 paradigmadocs) idDoc)
-                                                                                                         (filtrarAccesos paradigmadocs (unirAccess access accesses) (buscarUserDoc (getLista3 paradigmadocs) idDoc))))))
+                                (reverse (list-set (reverse (getLista3 paradigmadocs)) idDoc (limpiarListAccesos (setAccesos (seleccionarDoc (getLista3 paradigmadocs) idDoc)
+                                                                                                         (filtrarAccesos paradigmadocs (unirAccess access accesses) (buscarUserDoc (getLista3 paradigmadocs) idDoc)))))))
             paradigmadocs)
         )
     )
   )
             
-        
-        
-      
 
-
-
+;descripción: Función que elimina todos accesos de todos los documentos
+;dom: paradigmadocs
+;rec: paradigmadocs
+(define (revokeAllAccesses paradigmadocs)
+  (if (null? (getLista2 paradigmadocs))
+      paradigmadocs
+      (setLista3_implante (setLista2 paradigmadocs null) (map setAccesos_implante (getLista3 paradigmadocs))))
+  )
 
            
 ;---EJEMPLOS DE CADA FUNCIÓN---
@@ -112,9 +117,14 @@
 ; 3) SHARE
 (define Gdocs041 ((login Gdocs023 "user1" "pass1" share) 0 (access "user3" #\r) (access "user2" #\c)))
 (define Gdocs042 ((login Gdocs023 "user1" "pass1" share) 0 (access "user1" #\r) (access "user2" #\c)))
-(define Gdocs043 ((login Gdocs023 "user1" "pass1" share) 1 (access "user3" #\r) (access "user3" #\r) (access "user2" #\c)))
+(define Gdocs043 ((login Gdocs023 "user1" "pass1" share) 1 (access "user3" #\r) (access "user3" #\w) (access "user2" #\c)))
 
 ; 4)
 (define lol1 (sacarUsuariosAccesos (list (access "user2" #\r) (access "user1" #\r))))
 (define lol2 (sacarUsuariosRegistrados (getLista1 Gdocs011)))
 (define lol3 (filtrarAccesos Gdocs011 (list (access "user2" #\r) (access "user1" #\r)) "user5"))
+
+; 5) REVOKEALLACCESSES
+(define Gdocs051 (login Gdocs041 "user1" "pass1" revokeAllAccesses))
+(define Gdocs052 (login Gdocs042 "user1" "pass1" revokeAllAccesses))
+(define Gdocs053 (login Gdocs043 "user0" "pass1" revokeAllAccesses))
