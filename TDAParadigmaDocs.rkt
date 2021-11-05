@@ -96,11 +96,18 @@
      paradigmadocs_1)
   )
 
-;descripción: Función que modifica la segunda lista de paradigmadocs
+;descripción: Función que modifica la tercera lista de paradigmadocs
 ;dom: Lista x Lista
 ;rec: Lista
 (define (setLista3 paradigmadocs_1 NewLista3)
   (list (getPlataforma paradigmadocs_1) (getFechaP paradigmadocs_1) (getLista1 paradigmadocs_1) (getLista2 paradigmadocs_1) (cons NewLista3 (getLista3 paradigmadocs_1)) (getEncrypt paradigmadocs_1) (getDecrypt paradigmadocs_1))
+  )
+
+;descripción: Función que reimplanta la tercera lista de paradigmadocs
+;dom: Lista x Lista
+;rec: Lista
+(define (setLista3_implante paradigmadocs_1 NewLista3)
+  (list (getPlataforma paradigmadocs_1) (getFechaP paradigmadocs_1) (getLista1 paradigmadocs_1) (getLista2 paradigmadocs_1) NewLista3 (getEncrypt paradigmadocs_1) (getDecrypt paradigmadocs_1))
   )
 
 ;descripción: Función que modifica el nombre de una plataforma ya creada
