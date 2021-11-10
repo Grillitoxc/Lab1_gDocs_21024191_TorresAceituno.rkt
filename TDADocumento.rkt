@@ -137,7 +137,7 @@
 ;rec: Lista documento
 (define (setHistorial documento historial)
   (if (list? historial)
-      (list (getTitulo documento) (getFechaD documento) (getContenido documento) (getAutor documento) (getidDoc documento) (getAccesos documento) (cons historial (getHistorial documento)))
+      (list (getTitulo documento) (getFechaD documento) (getContenido documento) (getAutor documento) (getidDoc documento) (getAccesos documento) (cons (getHistorial documento) historial))
       documento)
   )
 
@@ -191,6 +191,28 @@
 (define (limpiarListAccesos documento)
   (list (getTitulo documento) (getFechaD documento) (getContenido documento) (getAutor documento) (getidDoc documento) (car (getAccesos documento)) (getHistorial documento))
   )
+
+;descripción: Función que verifica que el usuario que intenta hacer una acción, sea el propietario de un documento seleccionado
+;dom: Lista documentos X String X Entero
+;rec: Booleano
+(define (esPropietario? listaDocs autor idDoc)
+  (if (empty? listaDocs)
+      #f
+      (if (buscarDoc listaDocs idDoc)
+          (eq? (getAutor (seleccionarDoc listaDocs idDoc)) autor)
+          #f
+          )
+      )
+  )
+
+
+;descripción:
+;dom:
+;rec:
+(define (filtrarUnUsuario documento usario)
+  (if (empty? documento)
+      #f
+      (filter (eq? documento us
 
 
 ;To import
