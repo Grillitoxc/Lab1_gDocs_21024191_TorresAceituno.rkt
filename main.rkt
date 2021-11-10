@@ -5,6 +5,8 @@
 (require "TDADocumento.rkt")
 (require "TDAAcceso.rkt")
 
+
+;-REGISTER-
 ;descripción: Función que registra a un usuario verificando que este sea único
 ;dom: Paradigmadocs X date X string X string
 ;rec: Paradigmadocs
@@ -23,6 +25,7 @@
   )
 
 
+;-LOGIN-
 ;descripción: Función que autentica a un usuario registrado y le permite ejecutar un comando específico
 ;dom: paradigmadocs X string X string X function 
 ;rec: Paradigmadocs
@@ -53,6 +56,7 @@
   )
 
 
+;-CREATE-
 ;descripción: Función que crea un documento con los datos entregados. También se encarga de encriptar el contenido de este
 ;dom: paradigmadocs X date X String (titulo documento) X String  (contenido) 
 ;rec: Paradigmadocs
@@ -67,6 +71,7 @@
   )
 
 
+;-SHARE-
 ;descripción: Función que le da distintos tipos de accesos a usuarios que previamente se hayan registrado. En caso de que el usuario sea el propietario del documento, este no puede darse permisos.
 ;dom: Paradigmadocs X Entero X Lista de accesos
 ;rec: Paradigmadocs
@@ -83,11 +88,23 @@
         )
     )
   )
-            
 
+
+;-ADD-
 ;descripción: Función que elimina todos accesos de todos los documentos
-;dom: paradigmadocs
-;rec: paradigmadocs
+;dom: Paradigmadocs X Entero X Fecha X String
+;rec: Paradigmadocs
+;(define (add paradigmadocs)
+;  (lambda(idDoc date contenidoTexto)
+;    (if (or (esPropietario? (getLista3 paradigmadocs) (car (getLista2 paradigmadocs)) idDoc)
+;            ())
+
+
+
+;-REVOKEALLACCESSES-
+;descripción: Función que elimina todos accesos de todos los documentos
+;dom: Paradigmadocs
+;rec: Paradigmadocs
 (define (revokeAllAccesses paradigmadocs)
   (if (null? (getLista2 paradigmadocs))
       paradigmadocs
@@ -119,7 +136,7 @@
 (define Gdocs042 ((login Gdocs023 "user1" "pass1" share) 0 (access "user1" #\r) (access "user2" #\c)))
 (define Gdocs043 ((login Gdocs023 "user1" "pass1" share) 1 (access "user3" #\r) (access "user3" #\w) (access "user2" #\c)))
 
-; 4)
+; 4) 
 (define lol1 (sacarUsuariosAccesos (list (access "user2" #\r) (access "user1" #\r))))
 (define lol2 (sacarUsuariosRegistrados (getLista1 Gdocs011)))
 (define lol3 (filtrarAccesos Gdocs011 (list (access "user2" #\r) (access "user1" #\r)) "user5"))
