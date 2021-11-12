@@ -3,9 +3,6 @@
 (require "TDADate.rkt")
 (require "TDAParadigmadocs.rkt")
 
-;Representación: (string X fecha X string X string X entero X lista)
-;(titulo fecha contenido autor)
-
 ;---CONSTRUCTORES---
 ;descripción: Función que crea un documento con sus parámetros específicos
 ;dom: String X fecha X String X String X Entero X Lista
@@ -91,6 +88,15 @@
       documento)
   )
 
+;descripción: Función que cambia la fecha ingresada
+;dom: Lista documento X fecha
+;rec: Lista documento
+(define (setFechaD documento newFecha)
+  (if (fecha? newFecha)
+      (list (getTitulo documento) fecha (getContenido documento) (getAutor documento) (getidDoc documento) (getAccesos documento) (getHistorial documento))
+      documento)
+  )
+
 ;descripción: Función que cambia el contenido de un documento
 ;dom: Lista documento X string
 ;rec: Lista documento
@@ -133,12 +139,31 @@
   )
 
 ;descripción: Función que agrega una lista de acceso
-;dom: Lista documento X Entero
+;dom: Lista documento X Lista historial X String X Fecha X Entero X paradigmadocs
 ;rec: Lista documento
-(define (setHistorial documento historial)
+(define (setHistorial documento historial contenidoTexto date idDoc paradigmadocs)
   (if (list? historial)
-      (list (getTitulo documento) (getFechaD documento) (getContenido documento) (getAutor documento) (getidDoc documento) (getAccesos documento) (cons (getHistorial documento) historial))
+      (list (getTitulo documento)
+            date
+            ((getEncrypt paradigmadocs) (string-append ((getDecrypt paradigmadocs) (getContenido (seleccionarDoc (getLista3 paradigmadocs) idDoc))) contenidoTexto))
+            (getAutor documento)
+            (getidDoc documento)
+            (getAccesos documento)
+            (cons historial (getHistorial documento)))
       documento)
+  )
+
+;descripción: Función que restaura un documento y el actual pasa a ser parte del historial
+;dom: Lista documento X Lista Historial X Lista Documento X Entero
+;rec: Lista documento
+(define (setHistorial_restauracion documento historial documentoRestaurado idVersion)
+  (list (getTitulo documentoRestaurado)
+        (getFechaD documentoRestaurado)
+        (getContenido documentoRestaurado)
+        (getAutor documentoRestaurado)
+        (getidDoc documentoRestaurado)
+        (getAccesos documento)
+        (cons historial (reverse (quitarElementoLista (reverse (getHistorial documento)) idVersion))))
   )
 
 
@@ -195,6 +220,7 @@
 ;descripción: Función que verifica que el usuario que intenta hacer una acción, sea el propietario de un documento seleccionado
 ;dom: Lista documentos X String X Entero
 ;rec: Booleano
+;recursión: de cola
 (define (esPropietario? listaDocs autor idDoc)
   (if (empty? listaDocs)
       #f
@@ -205,15 +231,49 @@
       )
   )
 
+;descripción: Función que verifica que un usuario exista
+;dom: Lista Accesos x String
+;rec: Boleano
+;recursión: de cola
+(define (estaElUser? listaAccesos usuario)
+  (if (empty? listaAccesos)
+      #f
+      (if (eq? (car (car listaAccesos)) usuario)
+          #t
+          (estaElUser? (cdr listaAccesos) usuario)
+          )
+      )
+  )   
 
-;descripción:
-;dom:
-;rec:
-(define (filtrarUnUsuario documento usario)
+;descripción: Función que verifica que el usuario ingresado tenga el permiso correspondiente a escritura
+;dom: Lista Accesos x String
+;rec: Booleano
+;recursión: de cola
+(define (filtrarUsuariosEscritura listaAccesos usuario)
   (if (empty? documento)
       #f
-      (filter (eq? documento us
+      (if (estaElUser? listaAccesos usuario)
+          (if (eq? (first (car listaAccesos)) usuario)
+              (if (eq? (second (car listaAccesos)) #\w)
+                  #t
+                  (filtrarUsuariosEscritura (cdr listaAccesos) usuario))
+              (filtrarUsuariosEscritura (cdr listaAccesos) usuario)
+              )
+          #f
+          )
+      )
+  )
+
+;descripción: Función que elimina el índice de una lista
+;dom: Lista documentos X Entero
+;rec: Lista
+(define (quitarElementoLista lista indice)
+  (for/list ([i (length lista)]
+             [elem lista]
+             #:when (not (= i indice)))
+    elem))
 
 
 ;To import
 (provide (all-defined-out))
+(define xd1 (documento "titulo" (fecha 12 12 1222) "contenido" 12 "autor" (list "user1" "user1" "user2" "user3") null))
