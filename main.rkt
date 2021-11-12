@@ -44,6 +44,7 @@
         [(eq? operation create)(operation (setLista2 paradigmadocs (list username)))]
         [(eq? operation share)(operation (setLista2 paradigmadocs (list username)))]
         [(eq? operation add)(operation (setLista2 paradigmadocs (list username)))]
+        [(eq? operation restoreVersion)(operation (setLista2 paradigmadocs (list username)))]
         [(eq? operation revokeAllAccesses)(operation (setLista2 paradigmadocs (list username)))]
         [else paradigmadocs]
         )
@@ -51,6 +52,7 @@
         [(eq? operation create)(operation paradigmadocs)]
         [(eq? operation share)(operation paradigmadocs)]
         [(eq? operation add)(operation paradigmadocs)]
+        [(eq? operation restoreVersion)(operation paradigmadocs)]
         [(eq? operation revokeAllAccesses)(operation paradigmadocs)]
         [else paradigmadocs]
         )
@@ -125,20 +127,30 @@
 
 ;-RESTOREVERSION-
 ;descripción:
-;dom:
-;rec:
-;recursión:
+;dom: Paradigmadocs X Entero X Entero
+;rec: Paradigmadocs
+;recursión: de cola (esPropietario?)
 (define (restoreVersion paradigmadocs)
   (lambda(idDoc idVersion)
     (if (null? (getLista2 paradigmadocs))
-        (if (esPropietario? (getLista3 paradigmadocs) (car (getLista2 paradigmadocs)) idDoc)
-            (if (buscarDoc (getLista3 paradigmadocs) idDoc)
-                #t
-                #f
-                )
-            #f
-            )
         paradigmadocs
+        (if (esPropietario? (getLista3 paradigmadocs) (car (getLista2 paradigmadocs)) idDoc)
+            (if (and (< idVersion (length (getHistorial (seleccionarDoc (getLista3 paradigmadocs) idDoc))))
+                     (> idVersion -1))
+                (setLista3_implante (setLista2 paradigmadocs null)
+                                    (reverse (list-set (reverse (getLista3 paradigmadocs)) idDoc (setHistorial_restauracion
+                                                                                                  (seleccionarDoc (getLista3 paradigmadocs) idDoc) (documento
+                                                                                                                                                    (getTitulo (seleccionarDoc (getLista3 paradigmadocs) idDoc))
+                                                                                                                                                    (getFechaD (seleccionarDoc (getLista3 paradigmadocs) idDoc))
+                                                                                                                                                    (getContenido (seleccionarDoc (getLista3 paradigmadocs) idDoc))
+                                                                                                                                                    (getAutor (seleccionarDoc (getLista3 paradigmadocs) idDoc))
+                                                                                                                                                    idDoc
+                                                                                                                                                    null
+                                                                                                                                                    null) (list-ref (reverse (getHistorial (seleccionarDoc (getLista3 paradigmadocs) idDoc))) idVersion) idVersion))))
+                paradigmadocs
+                )
+            paradigmadocs
+            )
         )
     )
   )
@@ -189,7 +201,9 @@
 (define Gdocs053 ((login Gdocs041 "user3" "pass3" add) 0 (fecha 11 11 2021) " Contenido extra"))
 
 ; 6) RESTOREVERSION
-
+(define Gdocs061 ((login Gdocs052 "user1" "pass1" restoreVersion) 0 0))
+(define Gdocs062 ((login Gdocs052 "user1" "pass1" restoreVersion) 0 1))
+(define Gdocs063 ((login Gdocs052 "user1" "pass1" restoreVersion) 0 5))
 
 ; 7) REVOKEALLACCESSES
 (define Gdocs071 (login Gdocs051 "user1" "pass1" revokeAllAccesses))
