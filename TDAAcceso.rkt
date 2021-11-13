@@ -109,5 +109,26 @@
   )
 
 
+
+(define (userEnAcceso? user listaAccesos)
+  (if (empty? listaAccesos)
+      #f
+      (if (eq? user (car listaAccesos))
+          #t
+          (userEnAcceso? user (cdr listaAccesos))
+          )
+      )
+  )
+
+(define (quitarComentarios listaAccesos)
+  (filter (lambda (acceso)
+            (not (eq? (getModo acceso) #\c))) listaAccesos)
+  )
+
+(define (buscarDocsAccesos listaDocs user)
+  (filter (lambda (doc)
+            (userEnAcceso? user (map getUser (quitarComentarios (getAccesos doc))))) listaDocs)
+  )
+
 ;To import
 (provide (all-defined-out))
