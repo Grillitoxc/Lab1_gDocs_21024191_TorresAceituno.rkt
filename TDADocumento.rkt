@@ -273,7 +273,14 @@
              #:when (not (= i indice)))
     elem))
 
+;descripción: 
+;dom: 
+;rec: 
+(define (buscarDocsPropietario listaDocs user)
+  (filter (lambda (doc)
+            (eq? (getAutor doc) user)) listaDocs)
+  )
+
 
 ;To import
 (provide (all-defined-out))
-(define xd1 (documento "titulo" (fecha 12 12 1222) "contenido" 12 "autor" (list "user1" "user1" "user2" "user3") null))
