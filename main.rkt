@@ -46,6 +46,8 @@
         [(eq? operation add)(operation (setLista2 paradigmadocs (list username)))]
         [(eq? operation restoreVersion)(operation (setLista2 paradigmadocs (list username)))]
         [(eq? operation revokeAllAccesses)(operation (setLista2 paradigmadocs (list username)))]
+        [(eq? operation search)(operation (setLista2 paradigmadocs (list username)))]
+        [(eq? operation delete)(operation (setLista2 paradigmadocs (list username)))]
         [else paradigmadocs]
         )
       (cond
@@ -54,6 +56,8 @@
         [(eq? operation add)(operation paradigmadocs)]
         [(eq? operation restoreVersion)(operation paradigmadocs)]
         [(eq? operation revokeAllAccesses)(operation paradigmadocs)]
+        [(eq? operation search)(operation paradigmadocs)]
+        [(eq? operation delete)(operation paradigmadocs)]
         [else paradigmadocs]
         )
       )
@@ -69,7 +73,7 @@
     (if (null? (getLista2 paradigmadocs))
         paradigmadocs
         (setLista3 (setLista2 paradigmadocs null)
-                   (documento nombre date ((getEncrypt paradigmadocs) contenido) (car(getLista2 paradigmadocs)) (length (getLista3 paradigmadocs)) null null ))
+                   (documento nombre date ((getEncrypt paradigmadocs) contenido) (car(getLista2 paradigmadocs)) (length (getLista3 paradigmadocs)) null null date))
         )
     )
   )
@@ -99,7 +103,7 @@
 ;             Además, el documento con su contenido pasa a ser la versión actual de este, mientras que se pasa a un historial de versiones el documento anterior.
 ;dom: Paradigmadocs X Entero X Fecha X String
 ;rec: Paradigmadocs
-;recursión: de cola (buscarDoc, seleccionarDoc, filtrarUsuariosEscritura, 
+;recursión: de cola (buscarDoc, seleccionarDoc, filtrarUsuariosEscritura, esPropietario?)
 (define (add paradigmadocs)
   (lambda(idDoc date contenidoTexto)
     (if (null? (getLista2 paradigmadocs))
@@ -115,7 +119,8 @@
                                                                                                                                                                  (getAutor (seleccionarDoc (getLista3 paradigmadocs) idDoc))
                                                                                                                                                                  idDoc
                                                                                                                                                                  null
-                                                                                                                                                                 null) contenidoTexto date idDoc paradigmadocs))))
+                                                                                                                                                                 null
+                                                                                                                                                                 (getFechaCreacion (seleccionarDoc (getLista3 paradigmadocs) idDoc))) contenidoTexto date idDoc paradigmadocs))))
                 paradigmadocs
                 )
             paradigmadocs
@@ -126,7 +131,8 @@
 
 
 ;-RESTOREVERSION-
-;descripción:
+;descripción: Función que restaura una versión anterior de un documento. Sólo el propietario del documento puede hacer esta acción.
+;             Además, la versión actual del documento pasa a ser parte del historial, mientras que se actualiza la nueva versión actual con la restaurada
 ;dom: Paradigmadocs X Entero X Entero
 ;rec: Paradigmadocs
 ;recursión: de cola (esPropietario?)
@@ -146,7 +152,8 @@
                                                                                                                                                     (getAutor (seleccionarDoc (getLista3 paradigmadocs) idDoc))
                                                                                                                                                     idDoc
                                                                                                                                                     null
-                                                                                                                                                    null) (list-ref (reverse (getHistorial (seleccionarDoc (getLista3 paradigmadocs) idDoc))) idVersion) idVersion))))
+                                                                                                                                                    null
+                                                                                                                                                    (getFechaCreacion (seleccionarDoc (getLista3 paradigmadocs) idDoc))) (list-ref (reverse (getHistorial (seleccionarDoc (getLista3 paradigmadocs) idDoc))) idVersion) idVersion))))
                 paradigmadocs
                 )
             paradigmadocs
@@ -154,9 +161,6 @@
         )
     )
   )
-
-
-    
 
 
 ;-REVOKEALLACCESSES-
@@ -169,10 +173,87 @@
       (setLista3_implante (setLista2 paradigmadocs null) (map setAccesos_implante (getLista3 paradigmadocs))))
   )
 
-           
+
+;-SEARCH-
+;descripción: Función que permite al usuario buscar documentos propios o que le hayan sido compartidos que contengan un texto específico. Esta búsqueda se hace en la versión activa y en el historial de versiones
+;dom: Paradigmadocs
+;rec: Lista de documentos
+;recursión: de cola (buscarDocsPropietario)
+(define (search paradigmadocs)
+  (lambda (searchText)
+    (if (null? (getLista2 paradigmadocs))
+          null
+          (if (null? (buscarDocsPropietario (getLista3 paradigmadocs) (car (getLista2 paradigmadocs))))
+              null
+              #f
+              )
+          )
+    
+    )
+  )
+
+
+;descripción: Función que recibe una plataforma del estilo paradigmadocs y muestra toda la información guardada en caso de que el usuario no se logee dentro de login.
+;             Caso contrario, muestra la información respectiva al usuario que se logeó (documentos, fecha de creación de la cuenta, etc)
+;dom: Paradigmadocs
+;rec: String
+;(define (paradigmadocs->string paradigmadocs)
+;  )
+
+
+;-DELETE-
+;descripción: Funcipón que permite elimitar los N caracteres de la versión activa de un documento y guarda la versión que estaba antes en el historial
+;dom: Paradigmadocs X Entero X Fecha X Entero
+;rec: Paradigmadocs
+;recursión: de cola (esPropietario?, filtrarUsuariosEscritura)
+(define (delete paradigmadocs)
+  (lambda (idDoc date numberOfCharacters)
+    (if (null? (getLista2 paradigmadocs))
+        paradigmadocs
+        (if (or (esPropietario? (getLista3 paradigmadocs) (car (getLista2 paradigmadocs)) idDoc)
+                (filtrarUsuariosEscritura (getAccesos (seleccionarDoc (getLista3 paradigmadocs) idDoc)) (car (getLista2 paradigmadocs))))
+            (if (<= (string-length (decryptFn (getContenido (seleccionarDoc (getLista3 paradigmadocs) idDoc)))) numberOfCharacters)
+                (setLista3_implante (setLista2 paradigmadocs null)
+                                    (reverse (list-set (reverse (getLista3 paradigmadocs)) idDoc (setHistorial_delete
+                                                                                                  (seleccionarDoc (getLista3 paradigmadocs) idDoc)
+                                                                                                  ""
+                                                                                                  (documento
+                                                                                                   (getTitulo (seleccionarDoc (getLista3 paradigmadocs) idDoc))
+                                                                                                   (getFechaD (seleccionarDoc (getLista3 paradigmadocs) idDoc))
+                                                                                                   (getContenido (seleccionarDoc (getLista3 paradigmadocs) idDoc))
+                                                                                                   (getAutor (seleccionarDoc (getLista3 paradigmadocs) idDoc))
+                                                                                                   idDoc
+                                                                                                   null
+                                                                                                   null
+                                                                                                   (getFechaCreacion (seleccionarDoc (getLista3 paradigmadocs) idDoc)))
+                                                                                                  date
+                                                                                                  paradigmadocs))))    
+                (setLista3_implante (setLista2 paradigmadocs null)
+                                    (reverse (list-set (reverse (getLista3 paradigmadocs)) idDoc (setHistorial_delete
+                                                                                                  (seleccionarDoc (getLista3 paradigmadocs) idDoc)
+                                                                                                  ((getEncrypt paradigmadocs) (list->string (reverse (list-tail (reverse (string->list ((getDecrypt paradigmadocs) (getContenido (seleccionarDoc (getLista3 paradigmadocs) idDoc))))) numberOfCharacters))))
+                                                                                                  (documento
+                                                                                                   (getTitulo (seleccionarDoc (getLista3 paradigmadocs) idDoc))
+                                                                                                   (getFechaD (seleccionarDoc (getLista3 paradigmadocs) idDoc))
+                                                                                                   (getContenido (seleccionarDoc (getLista3 paradigmadocs) idDoc))
+                                                                                                   (getAutor (seleccionarDoc (getLista3 paradigmadocs) idDoc))
+                                                                                                   idDoc
+                                                                                                   null
+                                                                                                   null
+                                                                                                   (getFechaCreacion (seleccionarDoc (getLista3 paradigmadocs) idDoc)))
+                                                                                                  date
+                                                                                                  paradigmadocs))))
+                )
+            paradigmadocs
+            )
+        )
+    )
+  )
+
+
 ;---EJEMPLOS DE CADA FUNCIÓN---
 ; GENERANDO PARADIGMADOCS
-(define Gdocs000 (paradigmadocs "Gdocs" (fecha 25 10 2021) encryptFn encryptFn))
+(define Gdocs000 (paradigmadocs "Gdocs" (fecha 25 10 2021) encryptFn decryptFn))
 
 ; 1) REGISTER 
 (define Gdocs011 (register (register (register Gdocs000 (fecha 25 10 2021) "user1" "pass1") (fecha 25 10 2021) "user2" "pass2") (fecha 25 10 2021) "user3" "pass3"))
@@ -194,7 +275,6 @@
 (define Gdocs042 ((login Gdocs023 "user1" "pass1" share) 0 (access "user1" #\r) (access "user2" #\c)))
 (define Gdocs043 ((login Gdocs023 "user1" "pass1" share) 1 (access "user3" #\r) (access "user3" #\w) (access "user2" #\c)))
 
-
 ; 5) ADD
 (define Gdocs051 ((login Gdocs041 "user2" "pass2" add) 0 (fecha 11 11 2021) " Contenido extra"))
 (define Gdocs052 ((login Gdocs051 "user2" "pass2" add) 0 (fecha 12 11 2021) " Más contenido"))
@@ -209,3 +289,11 @@
 (define Gdocs071 (login Gdocs051 "user1" "pass1" revokeAllAccesses))
 (define Gdocs072 (login Gdocs042 "user1" "pass1" revokeAllAccesses))
 (define Gdocs073 (login Gdocs043 "user0" "pass1" revokeAllAccesses))
+
+; 8) SEARCH
+(define Gdocs081 ((login Gdocs052 "user3" "pass3" search) "Contenido"))
+
+; 10) DELETE
+(define Gdocs101 ((login Gdocs052 "user1" "pass1" delete) 0 (fecha 13 11 2021) 5))
+(define Gdocs102 ((login Gdocs052 "user1" "pass1" delete) 0 (fecha 13 11 2021) 10))
+(define Gdocs103 ((login Gdocs052 "user1" "pass1" delete) 0 (fecha 13 11 2021) 40))
