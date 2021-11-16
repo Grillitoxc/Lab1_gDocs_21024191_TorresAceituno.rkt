@@ -132,10 +132,19 @@
 
 
 ;---ORAS FUNCIONES---
-;descripción: Función que encripta/decripta un texto (se usan para lo mismo)
+;descripción: Función que encripta un texto con símbolos extraños
 ;dom: String
 ;rec: String
-(define encryptFn (lambda (s) (list->string (reverse (string->list s)))))
+(define encryptFn (lambda (s)
+                    (list->string (reverse (string->list (string-append (list->string (reverse (string->list (string-append (list->string (reverse (string->list s))) "☎ ☏ εїз ♨ ◊ ♢ ♥ ♤ ♧ ♧ ♤ ♧ ♫ ♬ ♪ ♩დ ღ ♡ ❣ ❤ ❥ ❦ ❧ ♥ ɞ☠ ☤ ☥ ☦ ☧ ☨ ☩ ☪ ☫ ☬ ☮ ☭ ☯ ☸ ☽ ☾ ♕ ♚ ♛ ✙ ✚ ✛ ✜ ✝ ✞ ✟ ✠ ✡ ✢ 卍 卐 卍 웃")))) "▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ˍ▆ˍ▆ˍ▆ˍ▆ˍ▆ˍ▆ˍ▆ˍ▆ˍ▆")))))
+  )
+
+;descripción: Función que deecripta un texto (deben estar enlazadas ambas funciones para que se cumpla la decodificación del mensaje (la función no es universal, sino que es específica)
+;dom: String
+;rec: String
+(define decryptFn (lambda (s)
+                    (list->string (reverse (list-tail (reverse (list-tail (reverse (string->list s)) 117)) 46)) ))
+  )
 
 
 ;To import

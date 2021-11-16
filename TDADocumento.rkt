@@ -7,13 +7,13 @@
 ;descripción: Función que crea un documento con sus parámetros específicos
 ;dom: String X fecha X String X String X Entero X Lista
 ;rec: Lista Documento
-(define (documento titulo fecha contenido autor idDoc accesos historial)
+(define (documento titulo fecha contenido autor idDoc accesos historial fechaCreacion)
   (if (and (string? titulo)
            (fecha? fecha)
            (string? autor)
            (string? contenido)
            )
-      (list titulo fecha contenido autor idDoc accesos historial)
+      (list titulo fecha contenido autor idDoc accesos historial fechaCreacion)
       null)
   )
 
@@ -77,6 +77,13 @@
   (seventh documento)
   )
 
+;descripción: Función que selecciona el historial de versiones del documento
+;dom: Lista Documento
+;rec: Lista de historial
+(define (getFechaCreacion documento)
+  (eighth documento)
+  )
+
 
 ;---MODIFICADORES---
 ;descripción: Función que cambia el titulo del documento
@@ -84,7 +91,7 @@
 ;rec: Lista documento
 (define (setTitulo documento newTitulo)
   (if (string? newTitulo)
-      (list newTitulo (getFechaD documento) (getContenido documento) (getAutor documento) (getidDoc documento) (getAccesos documento) (getHistorial documento))
+      (list newTitulo (getFechaD documento) (getContenido documento) (getAutor documento) (getidDoc documento) (getAccesos documento) (getHistorial documento) (getFechaCreacion documento))
       documento)
   )
 
@@ -93,7 +100,7 @@
 ;rec: Lista documento
 (define (setFechaD documento newFecha)
   (if (fecha? newFecha)
-      (list (getTitulo documento) fecha (getContenido documento) (getAutor documento) (getidDoc documento) (getAccesos documento) (getHistorial documento))
+      (list (getTitulo documento) fecha (getContenido documento) (getAutor documento) (getidDoc documento) (getAccesos documento) (getHistorial documento) (getFechaCreacion documento))
       documento)
   )
 
@@ -101,7 +108,7 @@
 ;dom: Lista documento X string
 ;rec: Lista documento
 (define (setContenido documento newContenido)
-  (list (getTitulo documento) (getFechaD documento) newContenido (getAutor documento) (getidDoc documento) (getAccesos documento) (getHistorial documento))
+  (list (getTitulo documento) (getFechaD documento) newContenido (getAutor documento) (getidDoc documento) (getAccesos documento) (getHistorial documento) (getFechaCreacion documento))
   )
 
 ;descripción: Función que modifica el autor del documento
@@ -109,7 +116,7 @@
 ;rec: Lista documento
 (define (setAutor documento newAutor)
   (if (string? newAutor)
-      (list (getTitulo documento) (getFechaD documento) (getContenido documento) newAutor (getidDoc documento) (getAccesos documento) (getHistorial documento))
+      (list (getTitulo documento) (getFechaD documento) (getContenido documento) newAutor (getidDoc documento) (getAccesos documento) (getHistorial documento) (getFechaCreacion documento))
       documento)
   )
 
@@ -118,7 +125,7 @@
 ;rec: Lista documento
 (define (setidDoc documento idDoc)
   (if (number? idDoc)
-      (list (getTitulo documento) (getFechaD documento) (getContenido documento) (getAutor documento) idDoc (getAccesos documento) (getHistorial documento))
+      (list (getTitulo documento) (getFechaD documento) (getContenido documento) (getAutor documento) idDoc (getAccesos documento) (getHistorial documento) (getFechaCreacion documento))
       documento)
   )
   
@@ -127,7 +134,7 @@
 ;rec: Lista documento
 (define (setAccesos documento accesos)
   (if (list? accesos)
-      (list (getTitulo documento) (getFechaD documento) (getContenido documento) (getAutor documento) (getidDoc documento) (cons accesos (getAccesos documento)) (getHistorial documento))
+      (list (getTitulo documento) (getFechaD documento) (getContenido documento) (getAutor documento) (getidDoc documento) (cons accesos (getAccesos documento)) (getHistorial documento) (getFechaCreacion documento))
       documento)
   )
 
@@ -138,7 +145,7 @@
   (list-set documento 5 null)
   )
 
-;descripción: Función que agrega una lista de acceso
+;descripción: Función que actualiza el historial de una documento (Agregando strings al final de su contenido)
 ;dom: Lista documento X Lista historial X String X Fecha X Entero X paradigmadocs
 ;rec: Lista documento
 (define (setHistorial documento historial contenidoTexto date idDoc paradigmadocs)
@@ -149,7 +156,24 @@
             (getAutor documento)
             (getidDoc documento)
             (getAccesos documento)
-            (cons historial (getHistorial documento)))
+            (cons historial (getHistorial documento))
+            (getFechaCreacion documento))
+      documento)
+  )
+
+;descripción: Función que actualiza el historial de una documento (cambiando el contenido del documento actual)
+;dom: Lista documento X Lista historial X String X Fecha X Entero X paradigmadocs
+;rec: Lista documento
+(define (setHistorial_delete documento contenido historial date paradigmadocs)
+  (if (list? historial)
+      (list (getTitulo documento)
+            date
+            contenido
+            (getAutor documento)
+            (getidDoc documento)
+            (getAccesos documento)
+            (cons historial (getHistorial documento))
+            (getFechaCreacion documento))
       documento)
   )
 
@@ -163,7 +187,8 @@
         (getAutor documentoRestaurado)
         (getidDoc documentoRestaurado)
         (getAccesos documento)
-        (cons historial (reverse (quitarElementoLista (reverse (getHistorial documento)) idVersion))))
+        (cons historial (reverse (quitarElementoLista (reverse (getHistorial documento)) idVersion)))
+        (getFechaCreacion documento))
   )
 
 
@@ -214,7 +239,7 @@
 ;dom: Lista documento
 ;rec: Lista documento
 (define (limpiarListAccesos documento)
-  (list (getTitulo documento) (getFechaD documento) (getContenido documento) (getAutor documento) (getidDoc documento) (car (getAccesos documento)) (getHistorial documento))
+  (list (getTitulo documento) (getFechaD documento) (getContenido documento) (getAutor documento) (getidDoc documento) (car (getAccesos documento)) (getHistorial documento) (getFechaCreacion documento))
   )
 
 ;descripción: Función que verifica que el usuario que intenta hacer una acción, sea el propietario de un documento seleccionado
@@ -273,9 +298,9 @@
              #:when (not (= i indice)))
     elem))
 
-;descripción: 
-;dom: 
-;rec: 
+;descripción: Función que revisa que el usuario ingresado sea el propietario en una lista de documentos
+;dom: Lista Documentos X String
+;rec: Lista Documentos
 (define (buscarDocsPropietario listaDocs user)
   (filter (lambda (doc)
             (eq? (getAutor doc) user)) listaDocs)
