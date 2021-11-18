@@ -87,6 +87,7 @@
 ;descripción: Función que se encarga de verificar si un usuario se repite
 ;dom: Lista usuarios X String
 ;rec: Boleano
+;recursión: de cola (por su fácil implementación y no dejar estados pendientes)
 (define (repiteUsuario lista elemento)
   (if (empty? lista)
       #f
@@ -108,8 +109,10 @@
                  (repiteUsuario (sacarUsuariosRegistrados (getLista1 paradigmadocs))(getUser usuarioAcceso))))listaAccesos)
   )
 
-
-
+;descripción: Función que verifica que un usuario esté en la lista de acceos
+;dom: String X Lista Accesos
+;rec: Booleano
+;recursión: de cola (por su fácil implementación y no dejar estados pendientes)
 (define (userEnAcceso? user listaAccesos)
   (if (empty? listaAccesos)
       #f
@@ -120,14 +123,20 @@
       )
   )
 
+;descripción: Función que quita el tipo de acceso comentario de una lista de accesos
+;dom: Lista Accesos
+;rec: Lista Accesos
 (define (quitarComentarios listaAccesos)
   (filter (lambda (acceso)
             (not (eq? (getModo acceso) #\c))) listaAccesos)
   )
 
+;descripción: Función que retorna los accesos a los cuales un usario se le ha compartido en un documento
+;dom: Lista Documentos x String
+;rec: Lista Documentos
 (define (buscarDocsAccesos listaDocs user)
   (filter (lambda (doc)
-            (userEnAcceso? user (map getUser (quitarComentarios (getAccesos doc))))) listaDocs)
+            (userEnAcceso? user (map getUser (getAccesos doc)))) listaDocs)
   )
 
 ;To import

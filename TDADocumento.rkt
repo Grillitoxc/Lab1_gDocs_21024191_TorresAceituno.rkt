@@ -5,7 +5,7 @@
 
 ;---CONSTRUCTORES---
 ;descripción: Función que crea un documento con sus parámetros específicos
-;dom: String X fecha X String X String X Entero X Lista
+;dom: String X Fecha X String X String X Entero X Lista X Fecha
 ;rec: Lista Documento
 (define (documento titulo fecha contenido autor idDoc accesos historial fechaCreacion)
   (if (and (string? titulo)
@@ -196,7 +196,7 @@
 ;descripción: Función que verifica si un documento está en la lsita de documentos mediante un id
 ;dom: Lista documentos X Entero
 ;rec: Booleano
-;recursión: de cola
+;recursión: de cola (elegida por su fácil implementación y no dejar estados pendientes)
 (define (buscarDoc listaDocs idDoc)
   (if (empty? listaDocs)
       #f
@@ -210,7 +210,7 @@
 ;descripción: Función que busca el autor del documento por su id
 ;dom: Lista documentos X Entero
 ;rec: String
-;recursión: de cola
+;recursión: de cola (elegida por su fácil implementación y no dejar estados pendientes)
 (define (buscarUserDoc listaDocs idDoc)
   (if (empty? listaDocs)
       #f
@@ -224,7 +224,7 @@
 ;descripción: Función que retorna un documento específico por su id
 ;dom: Lista documentos X Entero
 ;rec: Lsita documento
-;recursión: de cola
+;recursión: de cola (elegida por su fácil implementación y no dejar estados pendientes)
 (define (seleccionarDoc listaDocs idDoc)
   (if (empty? listaDocs)
       #f
@@ -245,7 +245,7 @@
 ;descripción: Función que verifica que el usuario que intenta hacer una acción, sea el propietario de un documento seleccionado
 ;dom: Lista documentos X String X Entero
 ;rec: Booleano
-;recursión: de cola
+;recursión: de cola (elegida por su fácil implementación y no dejar estados pendientes)
 (define (esPropietario? listaDocs autor idDoc)
   (if (empty? listaDocs)
       #f
@@ -259,7 +259,7 @@
 ;descripción: Función que verifica que un usuario exista
 ;dom: Lista Accesos x String
 ;rec: Boleano
-;recursión: de cola
+;recursión: de cola (elegida por su fácil implementación y no dejar estados pendientes)
 (define (estaElUser? listaAccesos usuario)
   (if (empty? listaAccesos)
       #f
@@ -273,7 +273,7 @@
 ;descripción: Función que verifica que el usuario ingresado tenga el permiso correspondiente a escritura
 ;dom: Lista Accesos x String
 ;rec: Booleano
-;recursión: de cola
+;recursión: de cola (elegida por su fácil implementación y no dejar estados pendientes)
 (define (filtrarUsuariosEscritura listaAccesos usuario)
   (if (empty? documento)
       #f
@@ -304,6 +304,96 @@
 (define (buscarDocsPropietario listaDocs user)
   (filter (lambda (doc)
             (eq? (getAutor doc) user)) listaDocs)
+  )
+
+;descripción: Función que fuerza a entregar una lista como una string independiente del contenido
+;dom: Lista
+;rec: String
+(define (list->string_force lista)
+  (string-join (map ~a lista) " ")
+  )
+
+;descripción: Función que transforma a string la lsita de accesos de un documento
+;dom: Lista Usuario
+;rec: String
+(define (modoDeAcceso user)
+  (cond
+    [(eq? (second user) #\r) (string-append "\n   ● El usuario: " (car user) " posee acceso de lectura")]
+    [(eq? (second user) #\w) (string-append "\n   ● El usuario: " (car user) " posee acceso de escritura")]
+    [(eq? (second user) #\c) (string-append "\n   ● El usuario: " (car user) " posee acceso de comentario")]
+    [else user]
+    )
+  )
+
+;descripción: Función que transfome toda una lista de accesos de un documento a una string
+;dom: Lista Accesos
+;rec: String
+(define (actualizarModoDeAcceso listaUsers)
+  (if (empty? listaUsers)
+      "No hay accesos concedidos aún"
+      (list->string_force (map modoDeAcceso listaUsers))
+      )
+  )
+
+;descripción: Función que agrupa el formato del historial de un documento en una string con la fecha de modificación y su contenido
+;dom: Lista Documento X Paradigmadocs
+;rec: String
+(define (formatoDoc_historial doc paradigmadocs)
+  (string-append "\n   Fecha de modificación: " (fecha->string (getFechaD doc))
+                 "\n     Contenido: " ((getDecrypt paradigmadocs) (getContenido doc))                                  
+                 )
+  )
+
+;descripción: Función que da el formato necesario a todos los documentos de la plataforma
+;dom: Lista Documentos X Paradigmadocs 
+;rec: String
+(define (darFormatoDocs_historial listaDocs paradigmadocs)
+  (if (empty? listaDocs)
+      "No se ha hecho ninguna modificación aún"
+      (list->string_force (map (curryr formatoDoc_historial paradigmadocs) (reverse listaDocs)))
+      )
+  )
+
+;descripción: Función que le da el formato completo a un documento 
+;dom: Lista Documento X Paradigmadocs
+;rec: String
+(define (formatoDoc doc paradigmadocs)
+  (string-append "\n  ✦ Número documento: " (number->string (getidDoc doc))
+                 "\n  Título: " (getTitulo doc)
+                 "\n  Fecha de creación: " (fecha->string (getFechaCreacion doc))
+                 "\n  Autor: " (getAutor doc)
+                 "\n  Última actualización de contenido: " (fecha->string (getFechaD doc))
+                 "\n  Contenido actual: " ((getDecrypt paradigmadocs) (getContenido doc))
+                 "\n  Accesos: " (actualizarModoDeAcceso (getAccesos doc))
+                 "\n  Versiones anteriores (ennumeradas desde 0 a N): " (darFormatoDocs_historial (getHistorial doc) paradigmadocs)
+                 "\n")
+  )
+
+;descripción: Función que da el formato a todos los documentos de una plataforma
+;dom: Lista Documentos x Paradigmadocs
+;rec: String
+(define (darFormatoDocs listaDocs paradigmadocs)
+  (list->string_force (map (curryr formatoDoc paradigmadocs) (reverse listaDocs)))
+  )
+
+;descripción: Función que da el formato a la lista de accesos de los documentos
+;dom: Lista Documentos X Paradigmadocs
+;rec: String
+(define (darFormatoDocs_login_access listaDocs paradigmadocs)
+  (if (empty? listaDocs)
+      "No hay documentos los cuales este usuario tenga accesos"
+      (list->string_force (map (curryr formatoDoc paradigmadocs) (reverse listaDocs)))
+      )
+  )
+
+;descripción: Función que da el formato a los documentos donde el usuario el propietario
+;dom: Lista Documentos X Paradigmadocs
+;rec: String
+(define (darFormatoDocs_login_propiedad listaDocs paradigmadocs)
+  (if (empty? listaDocs)
+      "No hay documentos en los que este usuario sea propietario"
+      (list->string_force (map (curryr formatoDoc paradigmadocs) (reverse listaDocs)))
+      )
   )
 
 

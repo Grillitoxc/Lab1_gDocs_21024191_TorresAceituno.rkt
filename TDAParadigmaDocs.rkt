@@ -146,6 +146,20 @@
                     (list->string (reverse (list-tail (reverse (list-tail (reverse (string->list s)) 117)) 46)) ))
   )
 
+;descripción: Función que saca la fecha de creación de un usuario registrado
+;dom: Lista Registro X String
+;rec: Fecha
+;recursión: (elegida por su fácil implementación y no dejar estados pendientes)
+(define (fechaDeCreacionUser? listaRegistrados usuario)
+  (if (empty? listaRegistrados)
+      null
+      (if (eq? (car (car listaRegistrados)) usuario)
+          (third (car listaRegistrados))
+          (fechaDeCreacionUser? (cdr listaRegistrados) usuario)
+          )
+      )
+  )  
+
 
 ;To import
 (provide (all-defined-out))
