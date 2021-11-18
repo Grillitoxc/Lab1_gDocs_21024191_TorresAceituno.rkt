@@ -49,6 +49,7 @@
         [(eq? operation search)(operation (setLista2 paradigmadocs (list username)))]
         [(eq? operation paradigmadocs->string)(operation (setLista2 paradigmadocs (list username)))]
         [(eq? operation delete)(operation (setLista2 paradigmadocs (list username)))]
+        [(eq? operation searchAndReplace)(operation (setLista2 paradigmadocs (list username)))]
         [else paradigmadocs]
         )
       (cond
@@ -60,6 +61,7 @@
         [(eq? operation search)(operation paradigmadocs)]
         [(eq? operation paradigmadocs->string)(operation paradigmadocs)]
         [(eq? operation delete)(operation paradigmadocs)]
+        [(eq? operation searchAndReplace)(operation paradigmadocs)]
         [else paradigmadocs]
         )
       )
@@ -268,6 +270,41 @@
   )
 
 
+;-SEARCHANDREPLACE-
+(define (searchAndReplace paradigmadocs)
+  (lambda (idDoc date searchText replaceText)
+    (if (null? (getLista2 paradigmadocs))
+        paradigmadocs
+        (if (buscarDoc (getLista3 paradigmadocs) idDoc)
+            (if (or (esPropietario? (getLista3 paradigmadocs) (car (getLista2 paradigmadocs)) idDoc)
+                (filtrarUsuariosEscritura (getAccesos (seleccionarDoc (getLista3 paradigmadocs) idDoc)) (car (getLista2 paradigmadocs))))
+                (if (string-contains? ((getDecrypt paradigmadocs) (getContenido (seleccionarDoc (getLista3 paradigmadocs) idDoc))) searchText)
+                    (setLista3_implante (setLista2 paradigmadocs null)
+                                    (reverse (list-set (reverse (getLista3 paradigmadocs)) idDoc (setHistorial_delete
+                                                                                                  (seleccionarDoc (getLista3 paradigmadocs) idDoc)
+                                                                                                  ((getEncrypt paradigmadocs) (string-replace ((getDecrypt paradigmadocs) (getContenido (seleccionarDoc (getLista3 paradigmadocs) idDoc))) searchText replaceText))
+                                                                                                  (documento
+                                                                                                   (getTitulo (seleccionarDoc (getLista3 paradigmadocs) idDoc))
+                                                                                                   (getFechaD (seleccionarDoc (getLista3 paradigmadocs) idDoc))
+                                                                                                   (getContenido (seleccionarDoc (getLista3 paradigmadocs) idDoc))
+                                                                                                   (getAutor (seleccionarDoc (getLista3 paradigmadocs) idDoc))
+                                                                                                   idDoc
+                                                                                                   null
+                                                                                                   null
+                                                                                                   (getFechaCreacion (seleccionarDoc (getLista3 paradigmadocs) idDoc)))
+                                                                                                  date
+                                                                                                  paradigmadocs))))
+                    paradigmadocs
+                    )
+                paradigmadocs
+                )
+            paradigmadocs
+            )
+        )
+    )
+  )
+
+
 ;---EJEMPLOS DE CADA FUNCIÓN---
 ; GENERANDO PARADIGMADOCS
 (define Gdocs000 (paradigmadocs "Gdocs" (fecha 25 10 2021) encryptFn decryptFn))
@@ -319,3 +356,8 @@
 (define Gdocs101 ((login Gdocs052 "user1" "pass1" delete) 0 (fecha 13 11 2021) 5))
 (define Gdocs102 ((login Gdocs052 "user1" "pass1" delete) 0 (fecha 13 11 2021) 10))
 (define Gdocs103 ((login Gdocs052 "user1" "pass1" delete) 0 (fecha 13 11 2021) 40))
+
+; 11) SEARCHANDREPLACE
+(define Gdocs111 ((login Gdocs052 "user1" "pass1" searchAndReplace) 0 (fecha 14 11 2021) "Contenido extra Más contenido" "TEXTO REEMPLAZADO"))
+(define Gdocs112 ((login Gdocs052 "user4" "pass4" searchAndReplace) 0 (fecha 14 11 2021) "Contenido extra Más contenido" "TEXTO REEMPLAZADO"))
+(define Gdocs113 ((login Gdocs052 "user2" "pass2" searchAndReplace) 0 (fecha 14 11 2021) "contenido" "YA NO ES CONTENIDOOOOOO"))
