@@ -204,18 +204,18 @@
 ;rec: String
 (define (paradigmadocs->string paradigmadocs)
   (if (null? (getLista2 paradigmadocs))
-      (display (string-append
+      (string-append
                 "\n ► Esta es la plataforma de documentos llamada: " (getPlataforma paradigmadocs)
                 "\n ► Fecha de creación de la plataforma: " (fecha->string (getFechaP paradigmadocs))
                 "\n ► Los documentos alcenados en esta plataforma son:\n " (darFormatoDocs (getLista3 paradigmadocs) paradigmadocs)   
-                 ))
-      (display (string-append
+                 )
+      (string-append
                 "\n ► Usuario ingresado: " (car (getLista2 paradigmadocs))
                 "\n ► Fecha de creación de la cuenta: " (fecha->string (fechaDeCreacionUser? (getLista1 paradigmadocs) (car (getLista2 paradigmadocs))))
                 "\n ► Los documentos los cuales este usuario tiene acceso son: " (darFormatoDocs_login_access (buscarDocsAccesos (getLista3 paradigmadocs) (car (getLista2 paradigmadocs))) paradigmadocs)
                 "\n ► Los documentos los cuales este usuario es propietario son: " (darFormatoDocs_login_propiedad (buscarDocsPropietario (getLista3 paradigmadocs) (car (getLista2 paradigmadocs))) paradigmadocs)
                 "\n"
-                 ))
+                 )
       )
   )
 
