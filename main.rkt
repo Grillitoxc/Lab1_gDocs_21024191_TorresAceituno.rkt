@@ -10,7 +10,7 @@
 ;descripción: Función que registra a un usuario verificando que este sea único
 ;dom: Paradigmadocs X date X string X string
 ;rec: Paradigmadocs
-;recursión: Natural
+;recursión: de cola (registrado?)
 (define (register paradigmadocs date username password)
   (define (registrado? listaUsuarios usuario_1)
     (if (empty? listaUsuarios)
@@ -47,6 +47,7 @@
         [(eq? operation restoreVersion)(operation (setLista2 paradigmadocs (list username)))]
         [(eq? operation revokeAllAccesses)(operation (setLista2 paradigmadocs (list username)))]
         [(eq? operation search)(operation (setLista2 paradigmadocs (list username)))]
+        [(eq? operation paradigmadocs->string)(operation (setLista2 paradigmadocs (list username)))]
         [(eq? operation delete)(operation (setLista2 paradigmadocs (list username)))]
         [else paradigmadocs]
         )
@@ -57,6 +58,7 @@
         [(eq? operation restoreVersion)(operation paradigmadocs)]
         [(eq? operation revokeAllAccesses)(operation paradigmadocs)]
         [(eq? operation search)(operation paradigmadocs)]
+        [(eq? operation paradigmadocs->string)(operation paradigmadocs)]
         [(eq? operation delete)(operation paradigmadocs)]
         [else paradigmadocs]
         )
@@ -83,7 +85,7 @@
 ;descripción: Función que le da distintos tipos de accesos a usuarios que previamente se hayan registrado. En caso de que el usuario sea el propietario del documento, este no puede darse permisos
 ;dom: Paradigmadocs X Entero X Lista de accesos
 ;rec: Paradigmadocs
-;recursión: de cola (buscarDoc, seleccionarDoc, buscarUserDoc)
+;recursión: de cola (buscarDoc, seleccionarDoc, buscarUserDoc) (elegida por su fácil implementación y no dejar estados pendientes)
 (define (share paradigmadocs)
   (lambda(idDoc access . accesses)
     (if (null? (getLista2 paradigmadocs))
@@ -103,7 +105,7 @@
 ;             Además, el documento con su contenido pasa a ser la versión actual de este, mientras que se pasa a un historial de versiones el documento anterior.
 ;dom: Paradigmadocs X Entero X Fecha X String
 ;rec: Paradigmadocs
-;recursión: de cola (buscarDoc, seleccionarDoc, filtrarUsuariosEscritura, esPropietario?)
+;recursión: de cola (buscarDoc, seleccionarDoc, filtrarUsuariosEscritura, esPropietario?) (elegida por su fácil implementación y no dejar estados pendientes)
 (define (add paradigmadocs)
   (lambda(idDoc date contenidoTexto)
     (if (null? (getLista2 paradigmadocs))
@@ -135,7 +137,7 @@
 ;             Además, la versión actual del documento pasa a ser parte del historial, mientras que se actualiza la nueva versión actual con la restaurada
 ;dom: Paradigmadocs X Entero X Entero
 ;rec: Paradigmadocs
-;recursión: de cola (esPropietario?)
+;recursión: de cola (esPropietario?) (elegida por su fácil implementación y no dejar estados pendientes)
 (define (restoreVersion paradigmadocs)
   (lambda(idDoc idVersion)
     (if (null? (getLista2 paradigmadocs))
@@ -178,7 +180,7 @@
 ;descripción: Función que permite al usuario buscar documentos propios o que le hayan sido compartidos que contengan un texto específico. Esta búsqueda se hace en la versión activa y en el historial de versiones
 ;dom: Paradigmadocs
 ;rec: Lista de documentos
-;recursión: de cola (buscarDocsPropietario)
+;recursión: de cola (buscarDocsPropietario) (elegida por su fácil implementación y no dejar estados pendientes)
 (define (search paradigmadocs)
   (lambda (searchText)
     (if (null? (getLista2 paradigmadocs))
@@ -193,19 +195,34 @@
   )
 
 
+;-PARADIGMADOCS->STRING
 ;descripción: Función que recibe una plataforma del estilo paradigmadocs y muestra toda la información guardada en caso de que el usuario no se logee dentro de login.
 ;             Caso contrario, muestra la información respectiva al usuario que se logeó (documentos, fecha de creación de la cuenta, etc)
 ;dom: Paradigmadocs
 ;rec: String
-;(define (paradigmadocs->string paradigmadocs)
-;  )
+(define (paradigmadocs->string paradigmadocs)
+  (if (null? (getLista2 paradigmadocs))
+      (display (string-append
+                "\n ► Esta es la plataforma de documentos llamada: " (getPlataforma paradigmadocs)
+                "\n ► Fecha de creación de la plataforma: " (fecha->string (getFechaP paradigmadocs))
+                "\n ► Los documentos alcenados en esta plataforma son:\n " (darFormatoDocs (getLista3 paradigmadocs) paradigmadocs)   
+                 ))
+      (display (string-append
+                "\n ► Usuario ingresado: " (car (getLista2 paradigmadocs))
+                "\n ► Fecha de creación de la cuenta: " (fecha->string (fechaDeCreacionUser? (getLista1 paradigmadocs) (car (getLista2 paradigmadocs))))
+                "\n ► Los documentos los cuales este usuario tiene acceso son: " (darFormatoDocs_login_access (buscarDocsAccesos (getLista3 paradigmadocs) (car (getLista2 paradigmadocs))) paradigmadocs)
+                "\n ► Los documentos los cuales este usuario es propietario son: " (darFormatoDocs_login_propiedad (buscarDocsPropietario (getLista3 paradigmadocs) (car (getLista2 paradigmadocs))) paradigmadocs)
+                "\n"
+                 ))
+      )
+  )
 
 
 ;-DELETE-
 ;descripción: Funcipón que permite elimitar los N caracteres de la versión activa de un documento y guarda la versión que estaba antes en el historial
 ;dom: Paradigmadocs X Entero X Fecha X Entero
 ;rec: Paradigmadocs
-;recursión: de cola (esPropietario?, filtrarUsuariosEscritura)
+;recursión: de cola (esPropietario?, filtrarUsuariosEscritura) (elegida por su fácil implementación y no dejar estados pendientes)
 (define (delete paradigmadocs)
   (lambda (idDoc date numberOfCharacters)
     (if (null? (getLista2 paradigmadocs))
@@ -256,9 +273,9 @@
 (define Gdocs000 (paradigmadocs "Gdocs" (fecha 25 10 2021) encryptFn decryptFn))
 
 ; 1) REGISTER 
-(define Gdocs011 (register (register (register Gdocs000 (fecha 25 10 2021) "user1" "pass1") (fecha 25 10 2021) "user2" "pass2") (fecha 25 10 2021) "user3" "pass3"))
-(define Gdocs012 (register Gdocs000 (fecha 25 3 2020) "user" "pass"))
-(define Gdocs013 (register (register Gdocs000 (fecha 25 3 2020) "user" "pass") (fecha 25 3 2020) "user" "pass2"))
+(define Gdocs011 (register (register (register Gdocs000 (fecha 25 4 2021) "user1" "pass1") (fecha 22 4 2021) "user2" "pass2") (fecha 25 4 2021) "user3" "pass3"))
+(define Gdocs012 (register Gdocs000 (fecha 15 4 2021) "user" "pass"))
+(define Gdocs013 (register (register Gdocs000 (fecha 25 3 2021) "user" "pass") (fecha 25 3 2021) "user" "pass2"))
 
 ; 2) LOGIN
 (define Gdocs021 (login Gdocs011 "user3" "pass3" share))
@@ -292,6 +309,11 @@
 
 ; 8) SEARCH
 (define Gdocs081 ((login Gdocs052 "user3" "pass3" search) "Contenido"))
+
+; 9) PARADIGMADOCS->STRING
+(define Gdocs091 (login Gdocs052 "user1" "pass1" paradigmadocs->string))
+(define Gdocs092 (login Gdocs052 "user2" "pass2" paradigmadocs->string))
+(define Gdocs093 (login Gdocs052 "user4" "pass4" paradigmadocs->string))
 
 ; 10) DELETE
 (define Gdocs101 ((login Gdocs052 "user1" "pass1" delete) 0 (fecha 13 11 2021) 5))
