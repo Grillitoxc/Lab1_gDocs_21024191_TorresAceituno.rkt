@@ -53,6 +53,11 @@
   (fourth paradigmadocs)
   )
 
+;descripción: Función que selecciona el primer elemento de una lista de estado de inicio de sesión
+;dom: Lista
+;rec: String
+(define seleccionarNombre car)
+
 ;descripción: Función que selecciona la tercera lista, correspondiente a información de acceso
 ;dom: Lista paradigmadocs
 ;rec: Lista
@@ -136,7 +141,8 @@
 ;dom: String
 ;rec: String
 (define encryptFn (lambda (s)
-                    (list->string (reverse (string->list (string-append (list->string (reverse (string->list (string-append (list->string (reverse (string->list s))) "☎ ☏ εїз ♨ ◊ ♢ ♥ ♤ ♧ ♧ ♤ ♧ ♫ ♬ ♪ ♩დ ღ ♡ ❣ ❤ ❥ ❦ ❧ ♥ ɞ☠ ☤ ☥ ☦ ☧ ☨ ☩ ☪ ☫ ☬ ☮ ☭ ☯ ☸ ☽ ☾ ♕ ♚ ♛ ✙ ✚ ✛ ✜ ✝ ✞ ✟ ✠ ✡ ✢ 卍 卐 卍 웃")))) "▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ˍ▆ˍ▆ˍ▆ˍ▆ˍ▆ˍ▆ˍ▆ˍ▆ˍ▆")))))
+                    (list->string (reverse (string->list (string-append (list->string (reverse (string->list (string-append (list->string (reverse (string->list s)))
+                                                                                                                            "☎ ☏ εїз ♨ ◊ ♢ ♥ ♤ ♧ ♧ ♤ ♧ ♫ ♬ ♪ ♩დ ღ ♡ ❣ ❤ ❥ ❦ ❧ ♥ ɞ☠ ☤ ☥ ☦ ☧ ☨ ☩ ☪ ☫ ☬ ☮ ☭ ☯ ☸ ☽ ☾ ♕ ♚ ♛ ✙ ✚ ✛ ✜ ✝ ✞ ✟ ✠ ✡ ✢ 卍 卐 卍 웃")))) "▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ˍ▆ˍ▆ˍ▆ˍ▆ˍ▆ˍ▆ˍ▆ˍ▆ˍ▆")))))
   )
 
 ;descripción: Función que deecripta un texto (deben estar enlazadas ambas funciones para que se cumpla la decodificación del mensaje (la función no es universal, sino que es específica)
@@ -146,10 +152,35 @@
                     (list->string (reverse (list-tail (reverse (list-tail (reverse (string->list s)) 117)) 46)) ))
   )
 
+;descripción: Función que elimina usuarios repetidos
+;dom: Lista Usuarios
+;rec: Lista Usuarios
+;recursión: natural (elegida por requerimiento)
+(define (removerRegistradosDuplicados lst)
+  (cond
+    [(empty? lst) empty]
+    [else (cons (first lst) (removerRegistradosDuplicados (filter (lambda (x)
+                                                                    (not (equal? (car (first lst)) (car x)))) lst)))]
+    )
+  )
+
+;descripción: Función que verifica si un usuario está registrado para ejecutar operaciones
+;dom: Lista Usuarios X String X String
+;rec: Booleano
+;recursión: de cola (elegida por su fácil implementación y no dejar estados pendientes)
+(define (verificado? listaUsuarios username_1 password_1)
+    (if (empty? listaUsuarios)
+        #f
+        (if (and (eq? (getNombre (car listaUsuarios)) username_1)
+                 (eq? (getContrasenna (car listaUsuarios)) password_1))
+            #t
+            (verificado? (cdr listaUsuarios) username_1 password_1)))
+    )
+
 ;descripción: Función que saca la fecha de creación de un usuario registrado
 ;dom: Lista Registro X String
 ;rec: Fecha
-;recursión: (elegida por su fácil implementación y no dejar estados pendientes)
+;recursión: de cola (elegida por su fácil implementación y no dejar estados pendientes)
 (define (fechaDeCreacionUser? listaRegistrados usuario)
   (if (empty? listaRegistrados)
       null

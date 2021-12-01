@@ -7,21 +7,12 @@
 
 
 ;-REGISTER-
-;descripción: Función que registra a un usuario verificando que este sea único
+;descripción: Función que registra a un usuario en la plataforma, de tal forma que no se repita ningún usuario
 ;dom: Paradigmadocs X date X string X string
 ;rec: Paradigmadocs
-;recursión: de cola (registrado?)
+;recursión: natural (removerRegistradosDuplicados) (elegida por requisito)
 (define (register paradigmadocs date username password)
-  (define (registrado? listaUsuarios usuario_1)
-    (if (empty? listaUsuarios)
-        #f
-        (if (eq? (getNombre (car listaUsuarios)) (getNombre usuario_1))
-            #t
-            (registrado? (cdr listaUsuarios) usuario_1)))
-    )
-  (if (registrado? (getLista1 paradigmadocs) (usuario username password date))
-      paradigmadocs
-      (setLista1 paradigmadocs (cons (usuario username password date)(getLista1 paradigmadocs))))
+      (setLista1 paradigmadocs (removerRegistradosDuplicados (reverse (cons (usuario username password date) (getLista1 paradigmadocs)))))
   )
 
 
@@ -29,16 +20,8 @@
 ;descripción: Función que autentica a un usuario registrado y le permite ejecutar un comando específico
 ;dom: paradigmadocs X string X string X function 
 ;rec: Paradigmadocs
-;recursión: de cola
+;recursión: de cola (verificado?) (elegida por su fácil implementación y no dejar estados pendientes)
 (define (login paradigmadocs username password operation)
-  (define (verificado? listaUsuarios username_1 password_1)
-    (if (empty? listaUsuarios)
-        #f
-        (if (and (eq? (getNombre (car listaUsuarios)) username_1)
-                 (eq? (getContrasenna (car listaUsuarios)) password_1))
-            #t
-            (verificado? (cdr listaUsuarios) username_1 password_1)))
-    )
   (if (verificado? (getLista1 paradigmadocs) username password)
       (cond
         [(eq? operation create)(operation (setLista2 paradigmadocs (list username)))]
@@ -77,7 +60,7 @@
     (if (null? (getLista2 paradigmadocs))
         paradigmadocs
         (setLista3 (setLista2 paradigmadocs null)
-                   (documento nombre date ((getEncrypt paradigmadocs) contenido) (car(getLista2 paradigmadocs)) (length (getLista3 paradigmadocs)) null null date))
+                   (documento nombre date ((getEncrypt paradigmadocs) contenido) (seleccionarNombre (getLista2 paradigmadocs)) (length (getLista3 paradigmadocs)) null null date))
         )
     )
   )
@@ -112,8 +95,8 @@
   (lambda(idDoc date contenidoTexto)
     (if (null? (getLista2 paradigmadocs))
         paradigmadocs
-        (if (or (esPropietario? (getLista3 paradigmadocs) (car (getLista2 paradigmadocs)) idDoc)
-                (filtrarUsuariosEscritura (getAccesos (seleccionarDoc (getLista3 paradigmadocs) idDoc)) (car (getLista2 paradigmadocs)) ))
+        (if (or (esPropietario? (getLista3 paradigmadocs) (seleccionarNombre (getLista2 paradigmadocs)) idDoc)
+                (filtrarUsuariosEscritura (getAccesos (seleccionarDoc (getLista3 paradigmadocs) idDoc)) (seleccionarNombre (getLista2 paradigmadocs)) ))
             (if (buscarDoc (getLista3 paradigmadocs) idDoc)
                 (setLista3_implante (setLista2 paradigmadocs null)
                                     (reverse (list-set (reverse (getLista3 paradigmadocs)) idDoc (setHistorial (seleccionarDoc (getLista3 paradigmadocs) idDoc) (documento
@@ -144,7 +127,7 @@
   (lambda(idDoc idVersion)
     (if (null? (getLista2 paradigmadocs))
         paradigmadocs
-        (if (esPropietario? (getLista3 paradigmadocs) (car (getLista2 paradigmadocs)) idDoc)
+        (if (esPropietario? (getLista3 paradigmadocs) (seleccionarNombre (getLista2 paradigmadocs)) idDoc)
             (if (and (< idVersion (length (getHistorial (seleccionarDoc (getLista3 paradigmadocs) idDoc))))
                      (> idVersion -1))
                 (setLista3_implante (setLista2 paradigmadocs null)
@@ -187,12 +170,11 @@
   (lambda (searchText)
     (if (null? (getLista2 paradigmadocs))
           null
-          (if (null? (buscarDocsPropietario (getLista3 paradigmadocs) (car (getLista2 paradigmadocs))))
+          (if (null? (buscarDocsPropietario (getLista3 paradigmadocs) (seleccionarNombre (getLista2 paradigmadocs))))
               null
               #f
               )
           )
-    
     )
   )
 
@@ -210,10 +192,10 @@
                 "\n ► Los documentos alcenados en esta plataforma son:\n " (darFormatoDocs (getLista3 paradigmadocs) paradigmadocs)   
                  )
       (string-append
-                "\n ► Usuario ingresado: " (car (getLista2 paradigmadocs))
-                "\n ► Fecha de creación de la cuenta: " (fecha->string (fechaDeCreacionUser? (getLista1 paradigmadocs) (car (getLista2 paradigmadocs))))
-                "\n ► Los documentos los cuales este usuario tiene acceso son: " (darFormatoDocs_login_access (buscarDocsAccesos (getLista3 paradigmadocs) (car (getLista2 paradigmadocs))) paradigmadocs)
-                "\n ► Los documentos los cuales este usuario es propietario son: " (darFormatoDocs_login_propiedad (buscarDocsPropietario (getLista3 paradigmadocs) (car (getLista2 paradigmadocs))) paradigmadocs)
+                "\n ► Usuario ingresado: " (seleccionarNombre (getLista2 paradigmadocs))
+                "\n ► Fecha de creación de la cuenta: " (fecha->string (fechaDeCreacionUser? (getLista1 paradigmadocs) (seleccionarNombre (getLista2 paradigmadocs))))
+                "\n ► Los documentos los cuales este usuario tiene acceso son: " (darFormatoDocs_login_access (buscarDocsAccesos (getLista3 paradigmadocs) (seleccionarNombre (getLista2 paradigmadocs))) paradigmadocs)
+                "\n ► Los documentos los cuales este usuario es propietario son: " (darFormatoDocs_login_propiedad (buscarDocsPropietario (getLista3 paradigmadocs) (seleccionarNombre (getLista2 paradigmadocs))) paradigmadocs)
                 "\n"
                  )
       )
@@ -229,8 +211,8 @@
   (lambda (idDoc date numberOfCharacters)
     (if (null? (getLista2 paradigmadocs))
         paradigmadocs
-        (if (or (esPropietario? (getLista3 paradigmadocs) (car (getLista2 paradigmadocs)) idDoc)
-                (filtrarUsuariosEscritura (getAccesos (seleccionarDoc (getLista3 paradigmadocs) idDoc)) (car (getLista2 paradigmadocs))))
+        (if (or (esPropietario? (getLista3 paradigmadocs) (seleccionarNombre (getLista2 paradigmadocs)) idDoc)
+                (filtrarUsuariosEscritura (getAccesos (seleccionarDoc (getLista3 paradigmadocs) idDoc)) (seleccionarNombre (getLista2 paradigmadocs))))
             (if (<= (string-length (decryptFn (getContenido (seleccionarDoc (getLista3 paradigmadocs) idDoc)))) numberOfCharacters)
                 (setLista3_implante (setLista2 paradigmadocs null)
                                     (reverse (list-set (reverse (getLista3 paradigmadocs)) idDoc (setHistorial_delete
@@ -276,8 +258,8 @@
     (if (null? (getLista2 paradigmadocs))
         paradigmadocs
         (if (buscarDoc (getLista3 paradigmadocs) idDoc)
-            (if (or (esPropietario? (getLista3 paradigmadocs) (car (getLista2 paradigmadocs)) idDoc)
-                (filtrarUsuariosEscritura (getAccesos (seleccionarDoc (getLista3 paradigmadocs) idDoc)) (car (getLista2 paradigmadocs))))
+            (if (or (esPropietario? (getLista3 paradigmadocs) (seleccionarNombre (getLista2 paradigmadocs)) idDoc)
+                (filtrarUsuariosEscritura (getAccesos (seleccionarDoc (getLista3 paradigmadocs) idDoc)) (seleccionarNombre (getLista2 paradigmadocs))))
                 (if (string-contains? ((getDecrypt paradigmadocs) (getContenido (seleccionarDoc (getLista3 paradigmadocs) idDoc))) searchText)
                     (setLista3_implante (setLista2 paradigmadocs null)
                                     (reverse (list-set (reverse (getLista3 paradigmadocs)) idDoc (setHistorial_delete
