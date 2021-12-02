@@ -1,7 +1,7 @@
 #lang racket
 ;TDA Documento
-(require "TDADate.rkt")
-(require "TDAParadigmadocs.rkt")
+(require "TDADate_21024191_TorresAceituno.rkt")
+(require "TDAParadigmaDocs_21024191_TorresAceituno.rkt")
 
 ;---CONSTRUCTORES---
 ;descripción: Función que crea un documento con sus parámetros específicos

@@ -1,7 +1,7 @@
 #lang racket
-(require "TDAParadigmadocs.rkt")
-(require "TDAUser.rkt")
-(require "TDADocumento.rkt")
+(require "TDAParadigmaDocs_21024191_TorresAceituno.rkt")
+(require "TDAUser_21024191_TorresAceituno.rkt")
+(require "TDADocumento_21024191_TorresAceituno.rkt")
 
 ;TDA Acceso
 

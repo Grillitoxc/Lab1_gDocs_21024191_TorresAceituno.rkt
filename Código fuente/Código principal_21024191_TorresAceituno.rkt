@@ -1,9 +1,9 @@
 #lang racket
-(require "TDAParadigmadocs.rkt")
-(require "TDAUser.rkt")
-(require "TDADate.rkt")
-(require "TDADocumento.rkt")
-(require "TDAAcceso.rkt")
+(require "TDAParadigmaDocs_21024191_TorresAceituno.rkt")
+(require "TDAUser_21024191_TorresAceituno.rkt")
+(require "TDADate_21024191_TorresAceituno.rkt")
+(require "TDADocumento_21024191_TorresAceituno.rkt")
+(require "TDAAcceso_21024191_TorresAceituno.rkt")
 
 
 ;-REGISTER-

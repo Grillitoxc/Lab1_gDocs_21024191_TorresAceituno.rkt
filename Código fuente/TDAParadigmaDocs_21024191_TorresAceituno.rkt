@@ -1,7 +1,7 @@
 #lang racket
 ;TDA Paradigmadocs
-(require "TDADate.rkt")
-(require "TDAUser.rkt")
+(require "TDADate_21024191_TorresAceituno.rkt")
+(require "TDAUser_21024191_TorresAceituno.rkt")
 
 ;---CONSTRUCTORES---
 ;descripción: Función que crea la plataforma con paradigmadocs
