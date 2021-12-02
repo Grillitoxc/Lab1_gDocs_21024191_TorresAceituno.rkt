@@ -1,0 +1,105 @@
+Requerimientos funcionales
+
+1. TDA’s
+Prerrequisitos para evaluación: Ninguno.
+Requisitos de implementación: Se cumple todo lo pedido.
+Funciones mínimas requeridas: Se cumple con las funciones.
+Evaluación: 1.
+Comentarios: Cada TDA está en un archivo aparte y cumple con todo lo necesario para ser un TDA (selectores, constructores, pertinencia, modificadores, funciones extra, etc).
+
+2. Register
+Prerrequisitos para evaluación: Cumplido.
+Requisitos de implementación: Cumplido.
+Comentarios: En un principio no se lograba realizar con recursión natural, pero casi al final del proyecto, se logró completar e implementar la recursión natural. Se falló un total de 42 veces y era por problemas en la recursión, una vez resuelto el problema no hubo más problemas.
+Ejemplos: Gdocs011, Gdocs012, Gdocs013.
+Evaluación: 1.
+
+3. Login
+Prerrequisitos para evaluación: Cumplido.
+Requisitos de implementación: Cumplidos todos.
+Comentarios: Los ejemplos de Login están hechos en base a la función Create y Share, además de demostrar que se devuelve un procedimiento en todos los casos (función de orden superior). Las veces que fallaba Login era por la currificación y el uso de operaciones, esto mandó aproximadamente 100 errores en el transcurso de la creación.
+Ejemplos: Gdocs021, Gdocs022, Gdocs023.
+Evaluación: 1.
+
+4. Create 
+Prerrequisitos para evaluación: Cumplido.
+Requisitos de implementación: Cumplidos todos.
+Comentarios: Create no tiene ningún problema y cumple con lo pedido respecto a seleccionar las funciones de encriptación a través de la currificación (lambda). Esta función tuve solo 5 fallos y su creación fue bastante rápida.
+Ejemplos: Gdocs031, Gdocs032, Gdocs033.
+Evaluación: 1.
+
+5. Share
+Prerrequisitos para evaluación: Cumplido.
+Requisitos de implementación: Cumplidos todos.
+Comentarios: Share funciona perfectamente, aunque durante su desarrollo, existieron más de 150 errores por problemas de escritura y de funcionamiento. Generalmente fallaba porque no se lograba encontrar la forma de hacer un list-set y por verificar muchas cosas.
+Ejemplos: Godcs041, Gdocs042, Gdocs043.
+Evaluación: 1.
+
+6. Add
+Prerrequisitos para evaluación: Cumplido.
+Requisitos de implementación: Cumplidos todos.
+Comentarios: Add fue muy complicada de crear por tener que crear una versión antigua y agregarla al historial. Tuvo aproximadamente 300 errores y gran mayoría venía de la actualización del documento actual. Finalmente, se masterizó el cambio y se logró el correcto funcionamiento de la función.
+Ejemplos: Gdocs051, Gdocs052, Gdocs053.
+Evaluación: 1.
+
+7. RestoreVersion
+Prerrequisitos para evaluación: Cumplido.
+Requisitos de implementación: Cumplidos todos.
+Comentarios: Restore versión fue muy similar a Add, por lo que no tomó más de 30 errores su realización. Generalmente daba errores por errores de escritura.
+Ejemplos: Gdocs061, Gdocs062, Gdocs063.
+Evaluación: 1.
+
+8. RevokeAllAccesses
+Prerrequisitos para evaluación: Cumplido.
+Requisitos de implementación: Cumplidos todos.
+Comentarios: Esta función costó por el aprendizaje de la función filter. Una vez se entendió su funcionamiento, revokeAllAccesses no tomó más de 10 intentos para que funcionara al 100%.
+Ejemplos: Gdocs071, Gdocs072, Gdocs073.
+Evaluación: 1.
+
+9. Search
+Prerrequisitos para evaluación: Cumplido.
+Requisitos de implementación: Se cumple el primer párrafo, el segundo parcialmente y el tercero se cumple parcialmente.
+Comentarios: Función no realizada por problemas en su funcionamiento, ya que no se logró hacer la búsqueda de textos tanto en las versiones activas como historial. Si se hubiese encontrado la forma de hacer esto, se pudo haber completado.
+Ejemplos: Gdocs081.
+Evaluación: 0.
+
+10. Paradigmadocs->String
+Prerrequisitos para evaluación: Cumplido.
+Requisitos de implementación: Cumplidos todos.
+Comentarios: Paradigmadocs->String sólo tomó 50 intentos para lograr generar el string. Esto se logró a través de funciones del tipo String-append, String->list, List->String, etc. Hay que considerar que esta función necesita ser corrida con (display GdocsXXX).
+Ejemplos: Gdocs091, Gdocs092, Gdocs093.
+Evaluación: 1.
+
+Requerimientos Opcionales
+
+11. Delete
+Prerrequisitos para evaluación: Cumplido. 
+Requisitos de implementación: Cumplidos todos.
+Comentarios: Delete no tomó más de 20 intentos ya que era muy similar a Add pero a la inversa, por ende no hubo casi problemas.
+Ejemplos: Gdocs101, Gdocs102, Gdocs103.
+Evaluación: 1.
+
+12. SearchAndReplace
+Prerrequisitos para evaluación: Cumplido.
+Requisitos de implementación: Cumplidos Todos.
+Comentarios: Nuevamente era muy similar a Delete, no tomó más de 20 intentos y fue muy sencilla de implementar gracias a la función String-Replace. 
+Ejemplos: Gdocs111, Gdocs112, Gdocs113.
+Evaluación: 1.
+
+13. ApplyStyles
+Comentarios: No realizada ya que era opcional y no se encontraba una forma sencilla de implementarla.
+Evaluación: 0.
+
+14. Comment
+Comentarios: No se realizó porque para lograrlo, se debía hacer un cambio muy grande en la implementación de Documentos, y eso iba a generar un costo de tiempo y errores muy grandes.
+Evaluación: 0.
+
+15. Función de encriptación y desencriptación
+Prerrequisitos para evaluación: Cumplido.
+Requisitos de implementación: Cumplidos todos.
+Comentarios: Fallaba inicialmente por errores de cálculo al poner símbolos y letras extrañas, pero nada relevante. No costó más de 50 intentos cada una.
+Evaluación: 1. 
+
+16. CtrlZ y CtrlY
+Comentarios: No se realizó porque para lograrlo, se debía hacer un cambio muy grande ya que se necesitaba generar memoria para esto, además de que el tiempo invertido en esta función era exagerado.
+Evaluación: 0.
