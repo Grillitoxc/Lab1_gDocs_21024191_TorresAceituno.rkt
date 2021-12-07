@@ -189,7 +189,7 @@
           (fechaDeCreacionUser? (cdr listaRegistrados) usuario)
           )
       )
-  )  
+  )
 
 
 ;To import
